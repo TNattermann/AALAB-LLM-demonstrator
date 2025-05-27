@@ -57,8 +57,8 @@ class TokenExplorer(App):
     def __init__(self, prompt=EXAMPLE_PROMPT, precompile=False):
         super().__init__()
         # Add support for multiple prompts.
-        self.prompts = [prompt, "Once upon a time, there was"]
-        self.prompt_index = 0
+        self.prompts = [prompt, "Once upon a time, there was", prompt]
+        self.prompt_index = 2
         self.explorer = Explorer(MODEL_NAME)
         self.explorer.set_prompt(prompt)
         self.rows = self._top_tokens_to_rows(

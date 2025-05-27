@@ -4,45 +4,78 @@ import time
 from evdev import InputDevice, list_devices, ecodes, UInput
 
 # === CONFIGURATION ===
-DEVICE_NAME_FRAGMENT = "SPEED-LINK"  # Replace with part of your joystick's name
+DEVICE_NAME_FRAGMENT = ["SPEEDLINK", "SPEED-LINK"] # Replace with part of your joystick's name
 CENTER = 128
 DEADZONE = 20  # Adjust for joystick sensitivity
 
-# === Helper: Find device by name ===
-def find_device_by_name(name_fragment):
-    for path in list_devices():
-        dev = InputDevice(path)
-        if name_fragment.lower() in dev.name.lower():
-            print(f"Found device: '{dev.name}' at {path}")
-            return dev
+# === Button to Key Sequence Mapping ===
+button_map = {
+    ecodes.BTN_NORTH: [ecodes.KEY_W, ecodes.KEY_D], # Deutsch - Links Oben
+    #ecodes.BTN_EAST:  [], # unbelegt - Rechts Unten
+    ecodes.BTN_WEST: [ecodes.KEY_X], # Save - Links Unten
+    ecodes.BTN_SOUTH: [ecodes.KEY_W, ecodes.KEY_W, ecodes.KEY_D] # Rechts Oben - english
+}
 
-# === State tracking ===
-state = {
+last_execution_time = {}
+
+# === Track previous state of each button ===
+button_state = {btn: False for btn in button_map.keys()}
+
+# === Track axis state ===
+axis_state = {
     'UP': False,
     'DOWN': False,
     'LEFT': False,
     'RIGHT': False
 }
 
-# === Helper: Emit key events ===
-def update_key(direction, pressed, ui):
+# === Helper: Find device by name ===
+def find_device_by_name(fragment_list):
+    for path in list_devices():
+        dev = InputDevice(path)
+        for fragment in fragment_list:
+            if fragment.lower() in dev.name.lower():
+                print(f"Found device: '{dev.name}' at {path}")
+                return dev
+
+# === Helper: Emit key events for axis directions ===
+def update_axis_key(direction, pressed, ui):
     key_map = {
         'UP': ecodes.KEY_UP,
         'DOWN': ecodes.KEY_DOWN,
         'LEFT': ecodes.KEY_LEFT,
         'RIGHT': ecodes.KEY_RIGHT
     }
-    if state[direction] != pressed:
+    if axis_state[direction] != pressed:
         ui.write(ecodes.EV_KEY, key_map[direction], int(pressed))
         ui.syn()
-        state[direction] = pressed
+        axis_state[direction] = pressed
 
-# === Main ===
+# === Helper: Emit key sequence for button press ===
+def trigger_button_sequence(button_code, ui):
+    global last_execution_time
+    cooldown_period = 10 if button_map.get(button_code, [])[0] == ecodes.KEY_X else 2 # dynamic cooldown setting
+ # Check if enough time has passed since last execution
+    current_time = time.time()
+    if button_code in last_execution_time and (current_time - last_execution_time[button_code]) < cooldown_period:
+        print(f"{button_code} is on cooldown. Ignoring repeated press.")
+        return  # Prevent execution if still on cooldown
+    last_execution_time[button_code] = current_time  # Update last execution time
+    key_seq = button_map[button_code]
+    for key in key_seq:
+        ui.write(ecodes.EV_KEY, key, 1)  # Key down
+        ui.syn()
+        time.sleep(0.05)
+        ui.write(ecodes.EV_KEY, key, 0)  # Key up
+        ui.syn()
+        time.sleep(0.05)
+
+# === Main loop ===
 def main():
     joystick = find_device_by_name(DEVICE_NAME_FRAGMENT)
     if not joystick:
         print(f"Device with name containing '{DEVICE_NAME_FRAGMENT}' not found.")
-        sys.exit(0)
+        sys.exit(1)
 
     ui = UInput()
     print("Listening for joystick input...")
@@ -51,25 +84,34 @@ def main():
         if event.type == ecodes.EV_ABS:
             if event.code == ecodes.ABS_Y:
                 if event.value < CENTER - DEADZONE:
-                    update_key('UP', True, ui)
-                    update_key('DOWN', False, ui)
+                    update_axis_key('UP', True, ui)
+                    update_axis_key('DOWN', False, ui)
                 elif event.value > CENTER + DEADZONE:
-                    update_key('DOWN', True, ui)
-                    update_key('UP', False, ui)
+                    update_axis_key('DOWN', True, ui)
+                    update_axis_key('UP', False, ui)
                 else:
-                    update_key('UP', False, ui)
-                    update_key('DOWN', False, ui)
+                    update_axis_key('UP', False, ui)
+                    update_axis_key('DOWN', False, ui)
 
             elif event.code == ecodes.ABS_X:
                 if event.value < CENTER - DEADZONE:
-                    update_key('LEFT', True, ui)
-                    update_key('RIGHT', False, ui)
+                    update_axis_key('LEFT', True, ui)
+                    update_axis_key('RIGHT', False, ui)
                 elif event.value > CENTER + DEADZONE:
-                    update_key('RIGHT', True, ui)
-                    update_key('LEFT', False, ui)
+                    update_axis_key('RIGHT', True, ui)
+                    update_axis_key('LEFT', False, ui)
                 else:
-                    update_key('LEFT', False, ui)
-                    update_key('RIGHT', False, ui)
+                    update_axis_key('LEFT', False, ui)
+                    update_axis_key('RIGHT', False, ui)
+
+        elif event.type == ecodes.EV_KEY and event.code in button_map:
+            if event.value == 1 and not button_state[event.code]:
+                # Button just pressed
+                trigger_button_sequence(event.code, ui)
+                button_state[event.code] = True
+            elif event.value == 0:
+                # Button released
+                button_state[event.code] = False
 
 if __name__ == "__main__":
     main()
