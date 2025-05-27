@@ -13,7 +13,6 @@ import argparse
 import tomli 
 from datetime import datetime
 
-
 def load_config():
     try:
         with open("config.toml", "rb") as f:
@@ -58,7 +57,7 @@ class TokenExplorer(App):
     def __init__(self, prompt=EXAMPLE_PROMPT, precompile=False):
         super().__init__()
         # Add support for multiple prompts.
-        self.prompts = [prompt]
+        self.prompts = [prompt, "Once upon a time, there was"]
         self.prompt_index = 0
         self.explorer = Explorer(MODEL_NAME)
         self.explorer.set_prompt(prompt)
@@ -105,7 +104,7 @@ class TokenExplorer(App):
 
     def _top_tokens_to_rows(self, tokens):
         return [("token_id", "token", "prob")] + [
-            (token["token_id"], token["token"], token["probability"])
+            (token["token_id"], token["token"], "%3d%%" % (token["probability"] * 100))
             for token in tokens
         ]
         
@@ -202,7 +201,7 @@ class TokenExplorer(App):
     def action_add_prompt(self):
         if len(self.prompts) < MAX_PROMPTS:
             self.prompts.append(self.explorer.get_prompt())
-            self.prompt_index = (self.prompt_index + 1) % len(self.prompts)
+            self.prompt_index = len(self.prompts) -1
             self.explorer.set_prompt(self.prompts[self.prompt_index])
             self.query_one("#results", Static).update(self._render_prompt())
             self._refresh_table()
@@ -232,8 +231,10 @@ class TokenExplorer(App):
         self.query_one("#results", Static).update(self._render_prompt())
 
     def action_save_prompt(self):
+        instructions = "Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende und gib den gesamten Text nochmal aus ohne vorherige oder nachgelagerte Erklärungen. Die Geschichte sollte maximal 300 Wörter lang sein. Danach schreibe einen kurzen, prägnanten Titel zu dieser Geschichte. Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch. \n\n"
         with open(f"prompts/prompt_{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt", "w") as f:
-            f.write(self.explorer.get_prompt())
+            f.write(instructions + self.explorer.get_prompt())
+
 
     def action_select_next(self):
         """Move selection down one row"""
