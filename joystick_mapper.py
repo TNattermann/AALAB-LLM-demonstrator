@@ -8,13 +8,25 @@ DEVICE_NAME_FRAGMENT = ["SPEEDLINK", "SPEED-LINK"] # Replace with part of your j
 CENTER = 128
 DEADZONE = 20  # Adjust for joystick sensitivity
 
-# === Button to Key Sequence Mapping ===
+# === Button to Key Sequence Mapping for New Joysticks (SPEEDLINK) ===
 button_map = {
     ecodes.BTN_NORTH: [ecodes.KEY_W, ecodes.KEY_D], # Deutsch - Links Oben
     #ecodes.BTN_EAST:  [], # unbelegt - Rechts Unten
     ecodes.BTN_WEST: [ecodes.KEY_X], # Save - Links Unten
     ecodes.BTN_SOUTH: [ecodes.KEY_W, ecodes.KEY_W, ecodes.KEY_D] # Rechts Oben - english
 }
+
+# === Recognize device and dynamically change button mapping ===
+for path in list_devices():
+    dev = InputDevice(path)
+    if 'SPEED-LINK' in dev.name:
+        print('Using setup for old Joystick')
+        button_map = {
+            ecodes.BTN_TRIGGER: [ecodes.KEY_W, ecodes.KEY_D],  # Deutsch - Links Oben
+            # ecodes.BTN_EAST:  [], # unbelegt - Rechts Unten
+            ecodes.BTN_THUMB2: [ecodes.KEY_X],  # Save - Links Unten
+            ecodes.BTN_THUMB: [ecodes.KEY_W, ecodes.KEY_W, ecodes.KEY_D]  # Rechts Oben - english
+        }
 
 last_execution_time = {}
 
@@ -29,15 +41,6 @@ axis_state = {
     'RIGHT': False
 }
 
-# === Helper: Find device by name ===
-def find_device_by_name(fragment_list):
-    for path in list_devices():
-        dev = InputDevice(path)
-        for fragment in fragment_list:
-            if fragment.lower() in dev.name.lower():
-                print(f"Found device: '{dev.name}' at {path}")
-                return dev
-
 # === Helper: Emit key events for axis directions ===
 def update_axis_key(direction, pressed, ui):
     key_map = {
@@ -50,6 +53,15 @@ def update_axis_key(direction, pressed, ui):
         ui.write(ecodes.EV_KEY, key_map[direction], int(pressed))
         ui.syn()
         axis_state[direction] = pressed
+
+# === Helper: Find device by name ===
+def find_device_by_name(fragment_list):
+    for path in list_devices():
+        dev = InputDevice(path)
+        for fragment in fragment_list:
+            if fragment.lower() in dev.name.lower():
+                print(f"Found device: '{dev.name}' at {path}")
+                return dev
 
 # === Helper: Emit key sequence for button press ===
 def trigger_button_sequence(button_code, ui):
