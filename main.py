@@ -236,6 +236,9 @@ class TokenExplorer(App):
         index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
         with open(f"data/prompts/prompt_{index}.txt", "w") as f:
             f.write(instructions + self.explorer.get_prompt())
+        #ft = Fairytale(self.explorer.get_prompt())
+        #ft.generate_items("items/{index}")
+
         layouter = Layouter(index)
         layouter.formatter()
         # layouter.printer()
