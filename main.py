@@ -2,6 +2,7 @@ from ast import literal_eval
 from itertools import cycle
 from src.explorer import Explorer
 from src.utils import entropy_to_color, probability_to_color
+from src.Layout.layouter import Layouter
 from textual.app import App, ComposeResult, Binding
 from textual.containers import VerticalScroll
 from textual.reactive import reactive
@@ -232,8 +233,12 @@ class TokenExplorer(App):
 
     def action_save_prompt(self):
         instructions = "Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende und gib den gesamten Text nochmal aus ohne vorherige oder nachgelagerte Erklärungen. Die Geschichte sollte maximal 300 Wörter lang sein. Danach schreibe einen kurzen, prägnanten Titel zu dieser Geschichte. Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch. \n\n"
-        with open(f"prompts/prompt_{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt", "w") as f:
+        index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+        with open(f"data/prompts/prompt_{index}.txt", "w") as f:
             f.write(instructions + self.explorer.get_prompt())
+        layouter = Layouter(index)
+        layouter.formatter()
+        # layouter.printer()
 
 
     def action_select_next(self):

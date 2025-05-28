@@ -29,7 +29,7 @@ class Explorer:
         self.model = self.model.to(self.device)
         self.guide = None
         
-        # Initialize with empty promp
+        # Initialize with empty prompt
         self.prompt_text = ""
         self.prompt_tokens = []
     

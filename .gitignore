@@ -10,4 +10,4 @@ wheels/
 .venv
 
 # data storage
-prompts/
+data/prompts/

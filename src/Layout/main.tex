@@ -1,0 +1,71 @@
+\documentclass[twocolumn, fontsize=12pt]{scrartcl}
+\usepackage[utf8]{inputenc} % To import external files
+\usepackage[a4paper, top=6.5cm, bottom=4cm, left=3cm, right=3cm]{geometry} % Set the geometry of the page
+\usepackage{fancyhdr} % Header/Footer customization
+\usepackage{graphicx} % For the watermark
+\usepackage{background} % For the watermark
+\usepackage{cuted} % For the title of the farytale
+%\usepackage{multicol} % For multi columns
+\usepackage{babel} % language
+
+% Page settings
+\setlength{\columnsep}{0.5cm} % Spacing between the two columns
+\setlength{\parindent}{0pt}  % No indent after a paragraph
+
+\input{variable.txt} % Input of the commands containing the Variables and paths to the story file and picture
+
+% Watermark to add the Graphics around the fAIrytale to the page
+\backgroundsetup{
+  scale=1,                      % Size (1 = actual size)
+  color=black,                  % Color (ignored for images)
+  opacity=0.8,                  % Transparency (0 = fully transparent, 1 = opaque)
+  angle=0,                      % Rotation angle
+  position=current page.center, % Center the image on each page
+  contents={\includegraphics[width=\paperwidth]{fAIrytale_Vorlage.png}} % Image file
+}
+
+% Define footer content
+\fancyfoot{} % clear all footer fields
+\fancyfoot[C]{XXXX} % Center page number 
+
+\begin{document}
+\selectlanguage{ngerman} % american ngerman
+\pagestyle{empty}
+\noindent
+
+% Title of the fAIrytale
+\begin{strip}
+    \centering
+    {\LARGE \textbf{\input{\faryTitle}}}
+\end{strip}
+
+% Story of the fAIrytale
+\input{\story}
+
+% Picture of the fAIrytale
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=\columnwidth, height=10cm, keepaspectratio]{\faryPicture}
+\end{figure}
+
+\end{document}
+
+%\input{introduction.txt}
+
+%\makebox[\textwidth][l]{% width
+%  \parbox[b][\textheight][t]{\textwidth}{% height and width
+%    {\LARGE \textbf{Rolf und der Schatten des Herzens}}\\
+%    \begin{multicols}{2}
+%        \small % optional: smaller font to fit better
+%        Es war einmal vor langer Zeit in einem fernen Land, weit entfernt von Europa, ein sehr großer Mann namens Rolf. Er war sehr stark und hatte einen großen Schatten, der den Menschen Angst einjagte. Aber er half auch vielen anderen.
+%        Die Menschen im Dorf Huvala fürchteten sich vor seinem Anblick, doch wenn eine Brücke einstürzte oder ein Baum auf ein Haus fiel, war Rolf zur Stelle. Er sprach wenig, aber wenn er lachte, vibrierte die Erde ein wenig. Die Kinder versteckten sich anfangs hinter ihren Müttern, bis eines Tages die kleine Lina in einen Brunnen fiel.
+%        Niemand wagte sich nahe genug heran. Doch Rolf trat mit drei großen Schritten herbei, griff mit seiner starken Hand in die Tiefe und hob Lina sanft wie eine Feder heraus. Von diesem Tag an verlor sich die Angst. Die Kinder liefen ihm nach, baten ihn, sie auf seinen Schultern zu tragen. Er schnitzte Spielzeug aus Holz und lachte viel öfter.
+%        Doch Rolf hatte einen Wunsch: Er wollte nicht ewig als Riese unter Menschen leben. Eines Nachts wanderte er zum höchsten Berg des Landes und bat die uralte Sternenfrau um ein neues Herz. `Ein Herz, das nicht so groß ist, aber ganz dazugehört'', sagte er.
+%        Die Sternenfrau nickte, und als der Morgen kam, war Rolf verschwunden. Stattdessen lebte im Dorf ein stiller, großer Mann, der so ganz normal wirkte, dass viele nicht glaubten, wer er einst war. Doch Lina wusste es. Und wenn der Wind durch die Bäume rauschte, hörte man manchmal ein tiefes Lachen, das die Erde ein wenig erzittern ließ.
+        %\begin{figure}[t!]
+        %  \centering
+        %  \includegraphics[width=\linewidth, height=10cm, keepaspectratio]{example.png}
+        %\end{figure}
+%    \end{multicols}
+%  }
+%}
