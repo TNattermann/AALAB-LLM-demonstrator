@@ -1,5 +1,11 @@
 # Token Explorer
 
+## Disclaimer
+
+This repo is based on willkurt's [token-explorer repo](https://github.com/willkurt/token-explorer) and was further adapted by the AALAB at RPTU Kaiserslautern for demonstration purposes as a fAIrytale generator for workshops etc.
+
+This ReadME file is adapted accordingly.
+
 Token Explorer allows you to interactively explore the token generation process of an LLM, using a "video game" style interface. You can use either arrow keys or vim-style navigation (h/j/k/l) along with WASD keys.
 
 Token explore allows you to:
@@ -16,12 +22,26 @@ Token explore allows you to:
 
 ## Running the app
 
+For full automation of the fairytale generation, a local LaTeX installation in required, such as 
+
+```bash 
+sudo apt install texlive-full
+```
+
+Furthermore, API-Keys need to be provided locally in order to access the OpenAI API. (tbd)
+
 Token Explore uses `uv` for project management. Please see the [uv docs](https://docs.astral.sh/uv/getting-started/installation/) for more information.
 
 Once you have `uv` installed, you can install the dependencies and run the app with:
 
 ```bash 
 uv run main.py
+```
+
+In case you want to use a joystick, please install `evdev` (sudo pip3 install evdev), then open a separate terminal with root privileges (required for InputDevice control) and run:
+
+```bash 
+sudo python3 joystick_mapper.py
 ```
 
 In the model has a default prompt, but you can provide any text file as an argument to the app.

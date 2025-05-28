@@ -20,12 +20,12 @@ class Explorer:
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
         
         # Auto select device (CUDA > MPS > CPU)
-        if torch.cuda.is_available():
-            self.device = torch.device("cuda")
-        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-            self.device = torch.device("mps")
-        else:
-            self.device = torch.device("cpu")
+        #if torch.cuda.is_available():
+        #    self.device = torch.device("cuda")
+        #elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        #    self.device = torch.device("mps")
+        #else:
+        self.device = torch.device("cpu")
         self.model = self.model.to(self.device)
         self.guide = None
         
