@@ -22,9 +22,9 @@ class Layouter:
         """
         Set correct file index references in variable.txt file
         """
-        headline = f"\\newcommand{{\\faryTitle}}{{../../data/headline/{self.index}_headline.txt}}"
-        story = f"\\newcommand{{\\story}}{{../../data/textbody/{self.index}_story.txt}}"
-        image = f"\\newcommand{{\\faryPicture}}{{../../data/img/{self.index}_image.png}}"
+        headline = f"\\newcommand{{\\faryTitle}}{{../../data/{self.index}_headline.txt}}"
+        story = f"\\newcommand{{\\story}}{{../../data/{self.index}_story.txt}}"
+        image = f"\\newcommand{{\\faryPicture}}{{../../data/{self.index}_image.png}}"
 
         with open("variable.txt", "w") as file:
             file.write(headline + "\n")
