@@ -1,6 +1,7 @@
 import subprocess
 import shutil
 import os
+import cups
 
 class Layouter:
     """
@@ -59,4 +60,5 @@ class Layouter:
 if __name__ == "__main__":
     x = Layouter('test')
     x.formatter()
+    x.printer(printer_name = cups.Connection().getDefault())
 
