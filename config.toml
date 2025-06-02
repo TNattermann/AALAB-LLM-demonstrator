@@ -1,7 +1,7 @@
 # Model Configuration
 [model]
-#name = "Qwen/Qwen2.5-0.5B"        # Model identifier
-name = "Qwen/Qwen2.5-3B"        # Model identifier
+name = "Qwen/Qwen2.5-0.5B"        # Model identifier
+#name = "Qwen/Qwen2.5-3B"        # Model identifier
 
 # Prompt Settings
 [prompt]

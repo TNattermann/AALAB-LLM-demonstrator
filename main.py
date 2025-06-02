@@ -6,9 +6,7 @@ from src.Layout.layouter import Layouter
 from src.fairytale import Fairytale
 from textual.containers import VerticalScroll
 from textual.reactive import reactive
-from textual.widgets import Footer, Header, Static, DataTable
 from textwrap import dedent
-import cups
 import sys
 import os
 import argparse
@@ -16,16 +14,8 @@ import tomli
 from datetime import datetime
 from textual.app import App, ComposeResult
 from textual.containers import Container
-from textual.widgets import LoadingIndicator, Modal, Button, Static
-
-
-class SpinnerModal(Modal):
-    def compose(self) -> ComposeResult:
-        yield Container(
-            Static("Please wait...", id="spinner-text"),
-            LoadingIndicator(),
-            id="spinner-container"
-        )
+from textual.widgets import LoadingIndicator, Footer, Header, Static, DataTable
+from textual.screen import ModalScreen
 
 
 def load_config():
@@ -51,9 +41,14 @@ class TokenExplorer(App):
     """Main application class."""
 
     CSS = """
-    #spinner-container {
+    .hidden {
+        display: none;
+    }
+
+    #spinner {
+        dock: top;
         align: center middle;
-        padding: 2;
+        height: 5;
     }
     """
 
@@ -137,6 +132,7 @@ class TokenExplorer(App):
             yield Static(id="results")
             yield DataTable(id="table")
         yield Footer()
+        yield LoadingIndicator(id="spinner", classes="hidden")
 
     def _refresh_table(self):
         table = self.query_one(DataTable)
@@ -202,9 +198,6 @@ class TokenExplorer(App):
         table.add_columns(*self.rows[0])
         table.add_rows(self.rows[1:])
         table.cursor_type = "row"
-        self.spinner_modal = SpinnerModal(id="spinner")
-        await self.mount(self.spinner_modal)
-        await self.spinner_modal.hide()
 
     def action_next_struct(self):
         self.current_struct_index = (self.current_struct_index + 1) % len(self.regex_structs)
@@ -256,22 +249,37 @@ class TokenExplorer(App):
         self.display_mode = next(self.display_modes)
         self.query_one("#results", Static).update(self._render_prompt())
 
+    #async def action_save_prompt(self):
+    #    instructions = "Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende und gib den gesamten Text nochmal aus ohne vorherige oder nachgelagerte Erklärungen. Die Geschichte sollte maximal 300 Wörter lang sein. Danach schreibe einen kurzen, prägnanten Titel zu dieser Geschichte. Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch. \n\n"
+    #    self.index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+    #    with open(f"data/prompts/prompt_{self.index}.txt", "w") as f:
+    #        f.write(instructions + self.explorer.get_prompt())
+    #    await self.action_complete_and_layout()
+
     async def action_save_prompt(self):
+        import asyncio
+        spinner = self.query_one("#spinner", LoadingIndicator)
+        spinner.remove_class("hidden")  # Show spinner
+        try:
+            await asyncio.to_thread(self._save_prompt_work)
+        finally:
+            spinner.add_class("hidden")  # Hide spinner
+
+    def _save_prompt_work(self):
+        # This is the blocking work, run in background thread
         instructions = "Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende und gib den gesamten Text nochmal aus ohne vorherige oder nachgelagerte Erklärungen. Die Geschichte sollte maximal 300 Wörter lang sein. Danach schreibe einen kurzen, prägnanten Titel zu dieser Geschichte. Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch. \n\n"
         self.index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
         with open(f"data/prompts/prompt_{self.index}.txt", "w") as f:
             f.write(instructions + self.explorer.get_prompt())
-        await self.action_complete_and_layout()
+        ft = Fairytale(self.explorer.get_prompt())
+        ft.generate_items("data/", self.index)
+        layouter = Layouter(self.index, "src/Layout", ".")
+        layouter.formatter()
+        #layouter.printer()
 
-    async def action_complete_and_layout(self):
-        await self.spinner_modal.show()
-        # Run your task in a background thread or as async
-        await self.run_in_thread(self.background_task)
-        await self.spinner_modal.hide()
-
-    def background_task(self):
-        import time
-        time.sleep(5)
+    #def background_task(self):
+    #    import time
+    #    time.sleep(5)
 
         #ft = Fairytale(self.explorer.get_prompt())
         #ft.generate_items("data/{index}")

@@ -50,12 +50,14 @@ class Layouter:
         shutil.move(generated_pdf_path, final_pdf_path)
 
 
-    def printer(self, copies=2, printer_name=cups.Connection().getDefault()):
+    def printer(self, copies=2, printer_name=None):
         """
         Prints final pdf
         """
         command = ['lp', '-n', str(copies), f'{self.path_to_data}/data/pdf/{self.index}.pdf']
-        if printer_name:
+        if printer_name is None:
+            conn = cups.Connection()
+            printer_name = conn.getDefault()
             command += ['-d', printer_name]
             subprocess.run(command)
 
