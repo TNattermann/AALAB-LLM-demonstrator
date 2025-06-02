@@ -59,7 +59,7 @@ class Fairytale:
             f"Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch.\n\n"
         )
         text_prompt = (
-            f"Based on the following fairytale starting text, write a completed fairytale of at most 200 words "
+            f"Based on the following fairytale starting text, write a completed fairytale of at most 300 words "
             f"in the same language like the starting text, "
             f"Generate the full story including the starting text as a floating text without intermediate titles! "
             f"After that, generate a beautiful, short and creative title for this story, also in the same language.\n"
@@ -107,7 +107,7 @@ class Fairytale:
 
         # Generate an image matching the title and full_text
         image_prompt = (
-            f"Create a beautiful, colorful and imaginative illustration "
+            f"Create a beautiful, colorful and imaginative squared format illustration without text"
             f"for the following fairytale entitled '{title}':\n\n"
             f"{full_text}"
         )
