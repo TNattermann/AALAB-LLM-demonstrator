@@ -1,0 +1,3 @@
+\newcommand{\faryTitle}{../../data/headline/test_headline.txt}
+\newcommand{\story}{../../data/textbody/test_story.txt}
+\newcommand{\faryPicture}{../../data/img/test_image.png}
