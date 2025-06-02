@@ -8,6 +8,7 @@ from textual.containers import VerticalScroll
 from textual.reactive import reactive
 from textual.widgets import Footer, Header, Static, DataTable
 from textwrap import dedent
+import cups
 import sys
 import os
 import argparse
@@ -238,10 +239,12 @@ class TokenExplorer(App):
             f.write(instructions + self.explorer.get_prompt())
         #ft = Fairytale(self.explorer.get_prompt())
         #ft.generate_items("items/{index}")
+        
+        printer_name = cups.Connection().getDefault()
 
         layouter = Layouter(index)
         layouter.formatter()
-        # layouter.printer()
+        layouter.printer(printer_name = printer_name)
 
 
     def action_select_next(self):
@@ -283,7 +286,6 @@ class TokenExplorer(App):
             self.prompts[self.prompt_index] = self.explorer.get_prompt()
             self.query_one("#results", Static).update(self._render_prompt())
             self._refresh_table()
-
 
 
 if __name__ == "__main__":
