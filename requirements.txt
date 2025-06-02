@@ -1,2 +1,5 @@
 uv
 evdev
+# latex:
+# sudo apt install texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
+# secrets.txt for OpenAI API Keys

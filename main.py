@@ -1,6 +1,7 @@
 from ast import literal_eval
 from itertools import cycle
 from src.explorer import Explorer
+from src.fairytale import Fairytale
 from src.utils import entropy_to_color, probability_to_color
 from src.Layout.layouter import Layouter
 from textual.app import App, ComposeResult, Binding
@@ -14,6 +15,19 @@ import os
 import argparse
 import tomli 
 from datetime import datetime
+from textual.app import App, ComposeResult
+from textual.containers import Container
+from textual.widgets import LoadingIndicator, Modal, Button, Static
+
+
+class SpinnerModal(Modal):
+    def compose(self) -> ComposeResult:
+        yield Container(
+            Static("Please wait...", id="spinner-text"),
+            LoadingIndicator(),
+            id="spinner-container"
+        )
+
 
 def load_config():
     try:
@@ -36,6 +50,13 @@ MAX_PROMPTS = config["prompt"]["max_prompts"]
 
 class TokenExplorer(App):
     """Main application class."""
+
+    CSS = """
+    #spinner-container {
+        align: center middle;
+        padding: 2;
+    }
+    """
 
     display_modes = cycle(["prompt", "prob", "entropy"])
     display_mode = reactive(next(display_modes))
@@ -61,6 +82,7 @@ class TokenExplorer(App):
         # Add support for multiple prompts.
         self.prompts = [prompt, "Once upon a time, there was", prompt]
         self.prompt_index = 2
+        self.index = None
         self.explorer = Explorer(MODEL_NAME)
         self.explorer.set_prompt(prompt)
         self.rows = self._top_tokens_to_rows(
@@ -175,12 +197,15 @@ class TokenExplorer(App):
 [bold]Struct[/bold] {self._render_structure_section()}
 """)
     
-    def on_mount(self) -> None:
+    async def on_mount(self) -> None:
         self.query_one("#results", Static).update(self._render_prompt())
         table = self.query_one(DataTable)
         table.add_columns(*self.rows[0])
         table.add_rows(self.rows[1:])
         table.cursor_type = "row"
+        self.spinner_modal = SpinnerModal(id="spinner")
+        await self.mount(self.spinner_modal)
+        await self.spinner_modal.hide()
 
     def action_next_struct(self):
         self.current_struct_index = (self.current_struct_index + 1) % len(self.regex_structs)
@@ -232,20 +257,29 @@ class TokenExplorer(App):
         self.display_mode = next(self.display_modes)
         self.query_one("#results", Static).update(self._render_prompt())
 
-    def action_save_prompt(self):
+    async def action_save_prompt(self):
         instructions = "Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende und gib den gesamten Text nochmal aus ohne vorherige oder nachgelagerte Erklärungen. Die Geschichte sollte maximal 300 Wörter lang sein. Danach schreibe einen kurzen, prägnanten Titel zu dieser Geschichte. Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch. \n\n"
-        index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
-        with open(f"data/prompts/prompt_{index}.txt", "w") as f:
+        self.index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+        with open(f"data/prompts/prompt_{self.index}.txt", "w") as f:
             f.write(instructions + self.explorer.get_prompt())
-        ft = Fairytale(self.explorer.get_prompt())
-        ft.generate_items("data/{index}")
-        
-        printer_name = cups.Connection().getDefault()
+        await self.action_complete_and_layout()
 
-        layouter = Layouter(index)
-        layouter.formatter()
-        layouter.printer(printer_name = printer_name)
+    async def action_complete_and_layout(self):
+        await self.spinner_modal.show()
+        # Run your task in a background thread or as async
+        await self.run_in_thread(self.background_task)
+        await self.spinner_modal.hide()
 
+    def background_task(self):
+        import time
+        time.sleep(5)
+
+        #ft = Fairytale(self.explorer.get_prompt())
+        #ft.generate_items("data/{index}")
+
+        #layouter = Layouter(self.index)
+        #layouter.formatter()
+        #layouter.printer()
 
     def action_select_next(self):
         """Move selection down one row"""
