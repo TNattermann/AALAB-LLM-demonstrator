@@ -1,6 +1,7 @@
 from ast import literal_eval
 from itertools import cycle
 from src.explorer import Explorer
+from src.fairytale import Fairytale
 from src.utils import entropy_to_color, probability_to_color
 from src.Layout.layouter import Layouter
 from textual.app import App, ComposeResult, Binding
@@ -238,7 +239,7 @@ class TokenExplorer(App):
         with open(f"data/prompts/prompt_{index}.txt", "w") as f:
             f.write(instructions + self.explorer.get_prompt())
         ft = Fairytale(self.explorer.get_prompt())
-        ft.generate_items("data/{index}")
+        ft.generate_items("data/", index)
         
         printer_name = cups.Connection().getDefault()
 

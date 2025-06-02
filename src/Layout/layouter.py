@@ -58,7 +58,7 @@ class Layouter:
             subprocess.run(command)
 
 if __name__ == "__main__":
-    x = Layouter('test')
+    x = Layouter('_2_2025-06-02_16-37-04')
     x.formatter()
-    x.printer(printer_name = cups.Connection().getDefault())
+    #x.printer(printer_name = cups.Connection().getDefault())
 
