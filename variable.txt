@@ -1,3 +1,3 @@
-\newcommand{\faryTitle}{../../data/2_2025-06-02_18-50-09_headline.txt}
-\newcommand{\story}{../../data/2_2025-06-02_18-50-09_story.txt}
-\newcommand{\faryPicture}{../../data/2_2025-06-02_18-50-09_image.png}
+\newcommand{\faryTitle}{../../data/2_2025-06-02_17-52-13_headline.txt}
+\newcommand{\story}{../../data/2_2025-06-02_17-52-13_story.txt}
+\newcommand{\faryPicture}{../../data/2_2025-06-02_17-52-13_image.png}
