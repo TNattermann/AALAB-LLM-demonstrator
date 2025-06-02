@@ -249,13 +249,6 @@ class TokenExplorer(App):
         self.display_mode = next(self.display_modes)
         self.query_one("#results", Static).update(self._render_prompt())
 
-    #async def action_save_prompt(self):
-    #    instructions = "Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende und gib den gesamten Text nochmal aus ohne vorherige oder nachgelagerte Erklärungen. Die Geschichte sollte maximal 300 Wörter lang sein. Danach schreibe einen kurzen, prägnanten Titel zu dieser Geschichte. Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch. \n\n"
-    #    self.index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
-    #    with open(f"data/prompts/prompt_{self.index}.txt", "w") as f:
-    #        f.write(instructions + self.explorer.get_prompt())
-    #    await self.action_complete_and_layout()
-
     async def action_save_prompt(self):
         import asyncio
         spinner = self.query_one("#spinner", LoadingIndicator)
@@ -275,18 +268,7 @@ class TokenExplorer(App):
         ft.generate_items("data/", self.index)
         layouter = Layouter(self.index, "src/Layout", ".")
         layouter.formatter()
-        #layouter.printer()
-
-    #def background_task(self):
-    #    import time
-    #    time.sleep(5)
-
-        #ft = Fairytale(self.explorer.get_prompt())
-        #ft.generate_items("data/{index}")
-
-        #layouter = Layouter(self.index)
-        #layouter.formatter()
-        #layouter.printer()
+        layouter.printer()
 
     def action_select_next(self):
         """Move selection down one row"""

@@ -108,7 +108,7 @@ class Fairytale:
         # Generate an image matching the title and full_text
         image_prompt = (
             f"Create a beautiful, colorful and imaginative squared format illustration without text"
-            f"for the following fairytale entitled '{title}':\n\n"
+            f"for the following fairytale '{title}':\n\n"
             f"{full_text}"
         )
 
