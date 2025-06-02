@@ -1,10 +1,9 @@
 from ast import literal_eval
 from itertools import cycle
 from src.explorer import Explorer
-from src.fairytale import Fairytale
 from src.utils import entropy_to_color, probability_to_color
 from src.Layout.layouter import Layouter
-from textual.app import App, ComposeResult, Binding
+from src.fairytale import Fairytale
 from textual.containers import VerticalScroll
 from textual.reactive import reactive
 from textual.widgets import Footer, Header, Static, DataTable
