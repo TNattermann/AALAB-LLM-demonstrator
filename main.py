@@ -243,7 +243,7 @@ class TokenExplorer(App):
         
         printer_name = cups.Connection().getDefault()
 
-        layouter = Layouter(index)
+        layouter = Layouter(index, "src/Layout", ".")
         layouter.formatter()
         layouter.printer(printer_name = printer_name)
 

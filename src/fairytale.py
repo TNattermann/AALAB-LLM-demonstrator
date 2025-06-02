@@ -97,11 +97,11 @@ class Fairytale:
 
 
         # Save the fairytale text and title to TXT files
-        output_title_path = f"{file_path}_{index}_headline.txt"
+        output_title_path = f"{file_path}/{index}_headline.txt"
         with open(output_title_path, 'w', encoding='utf-8') as title_file:
             title_file.write(title)
 
-        output_full_text_path = f"{file_path}_{index}_story.txt"
+        output_full_text_path = f"{file_path}/{index}_story.txt"
         with open(output_full_text_path, 'w', encoding='utf-8') as full_text_file:
             full_text_file.write(full_text)
 
@@ -123,7 +123,7 @@ class Fairytale:
         image_bytes = base64.b64decode(image_base64)
 
         # Save the image as a PNG file
-        image_output_path = f"{file_path}_{index}_image.png"
+        image_output_path = f"{file_path}/{index}_image.png"
         with open(image_output_path, "wb") as image_file:
             image_file.write(image_bytes)
 

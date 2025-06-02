@@ -8,8 +8,10 @@ class Layouter:
     Class that combines standalone image, text and headline into a formatted pdf and prints
     """
 
-    def __init__(self, index):
+    def __init__(self, index, path_to_tex = ".", path_to_data = "../.."):
         self.index = index  # combination of prompt index and timestamp
+        self.path_to_tex = path_to_tex
+        self.path_to_data = path_to_data
 
     def formatter(self):
         """
@@ -35,8 +37,8 @@ class Layouter:
         """
         Execute the latex main.tex and store as pdf
         """
-        tex_file = "main.tex"
-        output_dir = "../../data/pdf"
+        tex_file = f"{self.path_to_tex}/main.tex"
+        output_dir = f"{self.path_to_data}/data/pdf"
         pdf_name = f"{self.index}.pdf"
         subprocess.run(["pdflatex", f"-output-directory={output_dir}", tex_file], check=True)
 
@@ -52,13 +54,13 @@ class Layouter:
         """
         Prints final pdf
         """
-        command = ['lp', '-n', str(copies), f'../../data/pdf/{self.index}.pdf']
+        command = ['lp', '-n', str(copies), f'{self.path_to_data}/data/pdf/{self.index}.pdf']
         if printer_name:
             command += ['-d', printer_name]
             subprocess.run(command)
 
 if __name__ == "__main__":
-    x = Layouter('_2_2025-06-02_16-37-04')
+    x = Layouter('_2_2025-06-02_16-37-04', "src/Layout", ".")
     x.formatter()
     #x.printer(printer_name = cups.Connection().getDefault())
 
