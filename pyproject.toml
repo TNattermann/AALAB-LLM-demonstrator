@@ -16,6 +16,6 @@ dependencies = [
     "transformers>=4.49.0",
     "openai",
     "pycups>=2.0.1",
-    "cups",
+
     "textual>=0.44.0",
 ]
