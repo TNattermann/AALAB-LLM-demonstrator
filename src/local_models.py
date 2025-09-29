@@ -16,7 +16,7 @@ def ensure_model(model_name=TEXT_MODEL):
         print(f"❌ Failed to pull model '{model_name}':", e)
 
 # Pull the model before starting the app
-#ensure_model("llama3")
+ensure_model("llama3")
 
 
 app = FastAPI()
