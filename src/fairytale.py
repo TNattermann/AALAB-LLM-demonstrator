@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 from typing import Dict
 from openai import OpenAI
+import requests
 
 class Fairytale:
     """
@@ -22,7 +23,7 @@ class Fairytale:
         """
         self.starting_text = starting_text
 
-    def generate_items(self, file_path: str, index: str) -> Dict[str, str]:
+    def generate_items(self, file_path: str, index: str, run_local=False) -> Dict[bool, str, str]:
         """
         Generates a full fairytale and a matching image using OpenAI's API.
 
@@ -38,18 +39,6 @@ class Fairytale:
         Returns:
             dict: A dictionary with keys 'full_text' and 'title'.
         """
-        api_key_path = Path("./openai_key.txt")
-
-        if not api_key_path.exists():
-            raise FileNotFoundError(f"API key file not found at: {api_key_path}")
-
-        # Read API key
-        with open(api_key_path, 'r') as key_file:
-            api_key = key_file.read().strip()
-
-        # Set up OpenAI client
-        client = OpenAI(api_key=api_key)
-
         # Generate fairytale text and title
         old_prompt = (
             f"Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende "
@@ -66,34 +55,63 @@ class Fairytale:
             f"Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.\n"
             f"\nStarting Text:\n{self.starting_text}"
         )
-
-        text_response = client.chat.completions.create(
-            model = "gpt-4o-mini",
-            messages = [
-                {"role": "user", "content": text_prompt}
-            ],
-            response_format = {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "simple_story",
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "full_text": {"type": "string"},
-                            "title": {"type": "string"}
-                        },
-                        "required": ["full_text", "title"],
-                        "additionalProperties": False
-                    },
-                    "strict": True
-                }
-            }
+        image_beginning = (
+            f"Create a beautiful, colorful and imaginative squared format illustration without text"
+            f"for the following fairytale "
         )
+        if run_local:
 
-        raw_json_string = text_response.choices[0].message.content
-        response_data = json.loads(raw_json_string)
-        title = response_data["title"]
-        full_text = response_data["full_text"]
+            response = requests.post("http://localhost:8000/generate", json={
+                "text_beginning": f"{text_prompt}",
+                "image_beginning": f"{image_beginning}"
+            })
+
+            data = response.json()
+            print("Generated Story:\n", data["story"])
+            print("Image saved at:", data["image_path"])
+
+
+        else:
+
+            api_key_path = Path("./openai_key.txt")
+
+            if not api_key_path.exists():
+                raise FileNotFoundError(f"API key file not found at: {api_key_path}")
+
+            # Read API key
+            with open(api_key_path, 'r') as key_file:
+                api_key = key_file.read().strip()
+
+            # Set up OpenAI client
+            client = OpenAI(api_key=api_key)
+
+            text_response = client.chat.completions.create(
+                model = "gpt-4o-mini",
+                messages = [
+                    {"role": "user", "content": text_prompt}
+                ],
+                response_format = {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "simple_story",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "full_text": {"type": "string"},
+                                "title": {"type": "string"}
+                            },
+                            "required": ["full_text", "title"],
+                            "additionalProperties": False
+                        },
+                        "strict": True
+                    }
+                }
+            )
+
+            raw_json_string = text_response.choices[0].message.content
+            response_data = json.loads(raw_json_string)
+            title = response_data["title"]
+            full_text = response_data["full_text"]
 
 
         # Save the fairytale text and title to TXT files
@@ -107,8 +125,7 @@ class Fairytale:
 
         # Generate an image matching the title and full_text
         image_prompt = (
-            f"Create a beautiful, colorful and imaginative squared format illustration without text"
-            f"for the following fairytale '{title}':\n\n"
+            f"{image_beginning} + '{title}':\n\n"
             f"{full_text}"
         )
 

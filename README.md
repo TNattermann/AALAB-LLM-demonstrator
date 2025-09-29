@@ -27,6 +27,11 @@ For full automation of the fairytale generation, a local LaTeX installation in r
 ```bash 
 sudo apt install texlive-full
 ```
+To run local text models instead of online API usage, we use the ollama package:
+```bash 
+sudo apt install curl
+curl -fsSL https://ollama.com/install.sh | sh
+```
 
 Furthermore, API-Keys need to be provided locally in order to access the OpenAI API. (tbd)
 
