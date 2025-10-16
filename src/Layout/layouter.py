@@ -35,9 +35,9 @@ class Layouter:
 
     def execute_latex(self):
         """
-        Execute the latex main.tex and store as pdf
+        Execute the latex fAIrytale_template.tex and store as pdf
         """
-        tex_file = f"{self.path_to_tex}/main.tex"
+        tex_file = f"{self.path_to_tex}/fAIrytale_template.tex"
         output_dir = f"{self.path_to_data}/data/pdf"
         pdf_name = f"{self.index}.pdf"
         subprocess.run(["pdflatex", f"-output-directory={output_dir}", tex_file], check=True)
