@@ -11,3 +11,9 @@ wheels/
 
 # data storage
 data/prompts/
+
+# Latex generated files
+*.aux
+*.log
+*.gz
+variable.txt
