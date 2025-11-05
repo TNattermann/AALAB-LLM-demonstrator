@@ -6,7 +6,7 @@
 \usepackage{background} % For the watermark
 \usepackage{cuted} % For the title of the farytale
 %\usepackage{multicol} % For multi columns
-\usepackage{babel} % language
+\usepackage[german]{babel}
 
 % Page settings
 \setlength{\columnsep}{0.5cm} % Spacing between the two columns
@@ -21,7 +21,7 @@
   opacity=1,                  % Transparency (0 = fully transparent, 1 = opaque)
   angle=0,                      % Rotation angle
   position=current page.center, % Center the image on each page
-  contents={\includegraphics[width=\paperwidth]{fAIrytale_Vorlage.png}} % Image file
+  contents={\includegraphics[width=\paperwidth]{\bgimage}} % Image file
 }
 
 % Define footer content
@@ -29,7 +29,6 @@
 \fancyfoot[C]{XXXX} % Center page number 
 
 \begin{document}
-\selectlanguage{ngerman} % american ngerman
 \pagestyle{empty}
 \noindent
 
@@ -40,7 +39,7 @@
 \end{strip}
 
 % Story of the fAIrytale
-\input{\story}\footnote{Diese Geschichte wurde am 03.06.2025 mit Hilfe von KI am Infostand Sozioinformatik der RPTU generiert.}
+\input{\story}\footnote{Diese Geschichte wurde am \today{} mit Hilfe von KI am Infostand Sozioinformatik der RPTU generiert.}
 
 % Picture of the fAIrytale
 \begin{figure}[t!]

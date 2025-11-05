@@ -24,11 +24,13 @@ class Layouter:
         """
         Set correct file index references in variable.txt file
         """
+        background = f"\\newcommand{{\\bgimage}}{{{self.path_to_tex}/fAIrytale_Vorlage.png}}"
         headline = f"\\newcommand{{\\faryTitle}}{{../../data/{self.index}_headline.txt}}"
         story = f"\\newcommand{{\\story}}{{../../data/{self.index}_story.txt}}"
         image = f"\\newcommand{{\\faryPicture}}{{../../data/{self.index}_image.png}}"
 
         with open("variable.txt", "w") as file:
+            file.write(background + "\n")
             file.write(headline + "\n")
             file.write(story + "\n")
             file.write(image + "\n")
@@ -62,7 +64,7 @@ class Layouter:
             subprocess.run(command)
 
 if __name__ == "__main__":
-    x = Layouter('_2_2025-06-02_16-37-04', "src/Layout", ".")
+    x = Layouter('test', "src/Layout", ".")
     x.formatter()
     #x.printer(printer_name = cups.Connection().getDefault())
 
