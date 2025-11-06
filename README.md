@@ -33,6 +33,19 @@ sudo apt install curl
 curl -fsSL https://ollama.com/install.sh | sh
 ```
 
+The local model's are hosted and infered using a FastTextAPI, which needs to be started separately:
+```bash 
+uvicorn src.local_models:app --reload
+```
+
+Inference of the local models can be tested via Curl:
+```bash 
+curl -X POST "http://127.0.0.1:8000/generate" \
+  -H "Content-Type: application/json" \
+  -d '{"text_beginning": "Once upon a time there was a fox", "image_beginning": "A brown fox in a forest"}'
+```
+
+
 Furthermore, API-Keys need to be provided locally in order to access the OpenAI API. (tbd)
 
 Token Explore uses `uv` for project management. Please see the [uv docs](https://docs.astral.sh/uv/getting-started/installation/) for more information.
