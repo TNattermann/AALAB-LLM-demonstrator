@@ -18,4 +18,6 @@ data/prompts/
 *.gz
 *.synctex
 *.out
+*.fdb_latexmk
+*.fls
 variable.txt

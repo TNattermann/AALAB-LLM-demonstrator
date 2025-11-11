@@ -1,4 +1,8 @@
-\newcommand{\bgimage}{fAIrytale_Vorlage.png}
-\newcommand{\faryTitle}{../../data/test_headline.txt}
+\newcommand{\bgimageFAIrytale}{images/fAIrytale_Vorlage.png}
+\newcommand{\bgimageLLMTimes}{images/LLM_Times_Vorlage.png}
+\newcommand{\imageLLMTimesBookcover}{images/bookcover.jpeg}
+\newcommand{\imageLLMTimesKarikatur}{images/LLM_Karikatur.png}
+\newcommand{\qrCode}{images/RPTU_QR.png}
+\newcommand{\storyTitle}{../../data/test_headline.txt}
 \newcommand{\story}{../../data/test_story.txt}
-\newcommand{\faryPicture}{../../data/test_image.png}
+\newcommand{\storyPicture}{../../data/test_image.png}
