@@ -1,5 +1,6 @@
 \documentclass[10pt]{article}
 \usepackage[T1]{fontenc}
+\usepackage{setspace}
 \usepackage[utf8]{inputenc} % To import external files
 \usepackage{multicol}
 \usepackage{lipsum} % Placeholder text
@@ -8,8 +9,38 @@
 \usepackage{fancyhdr} % Header/Footer control
 \usepackage{times} % Newspaper-style font (Times New Roman-like)
 \usepackage{ragged2e} % To ensure good justification
-\usepackage[german]{babel}
+\usepackage[ngerman]{babel}
 \usepackage{graphicx}
+\usepackage[most]{tcolorbox}
+\usepackage{wrapfig}
+\usepackage{tgbonum}
+\usepackage[ngerman]{datenumber}
+\usepackage{paracol}
+\usepackage{background} % For the watermark
+
+\input{variable.txt} % Input of the commands containing the Variables and paths to the story file and picture
+
+% Watermark to add the background template
+\backgroundsetup{
+  scale=1,                      % Size (1 = actual size)
+  color=black,                  % Color (ignored for images)
+  opacity=1,                  % Transparency (0 = fully transparent, 1 = opaque)
+  angle=0,                      % Rotation angle
+  position=current page.center, % Center the image on each page
+  contents={\includegraphics[width=\paperwidth]{\bgimageLLMTimes}} % Image file
+}
+
+% --- Design der Buchempfehlungsbox ---
+\newtcolorbox{bookbox}[1][]{%
+  colback=gray!5,
+  colframe=gray!60!black,
+  boxrule=0.8pt,
+  arc=2mm,
+  left=3mm, right=3mm, top=2mm, bottom=3mm,
+  enhanced,
+  before skip=0pt, after skip=10pt,
+  #1
+}
 
 % --- 1. Customizing Geometry for 5mm Margins and Masthead Positioning ---
 \geometry{
@@ -19,18 +50,12 @@
 	% Head height must be large enough to contain the masthead (e.g., 20mm)
 	headheight=0mm,
 	% Headsep defines the gap between the header box and the main text body.
-	% We want the masthead text to start 5mm from the top of the page.
-	% (5mm page margin) + (distance to start text) = 5mm (top margin is already included)
-	% Since margin=5mm is already set, we just need to place the text.
-	% Let's set the headsep to a small value and adjust the masthead text position.
 	headsep=0pt,
 	includehead,
 	includefoot,
 	% Use 'showframe' during testing to see the page boundaries
 	% showframe
 }
-
-\input{variable.txt} % Input of the commands containing the Variables and paths to the story file and picture
 
 \setlength{\parindent}{0pt}  % No indent after a paragraph
 
@@ -69,76 +94,90 @@
 }
 
 \begin{document}
-	%\selectlanguage{ngerman}
+	% --- Newspaper Masthead/Banner ---
+	 	\centering
+		%TODO: breaking news as output of the LLM
+		\fontsize{45pt}{45pt}\fontfamily{lmdh}\selectfont\textbf{TH3 LLM T1M3S}  
+		\par\vspace*{-30pt}
+		\rule{\linewidth}{0.4pt} 
+		\par\vskip 2pt
+		\normalsize \textbf{VOL. 101010, NO. 1} \hfill \datedayname,{ }\today \hfill \$ 0.006 
+		\par\vspace*{-4pt}
+		\rule{\linewidth}{1.5pt} % A thick line separating the masthead 
+		\par\vskip 10pt
+		\normalfont
 	
-	% --- Newspaper Masthead/Banner (Positioned 5mm from Top) ---
-	\begin{center}
-		\fontsize{45pt}{45pt}\selectfont\textbf{THE $\Lambda$TEX DAILY TRIBUNE}
-		\par\vskip 6pt
-		\Large \today \hfill \normalsize \textbf{VOL. CXXV, NO. 1} \par
-		\rule{\linewidth}{1.5pt} % A thick line separating the masthead
-		\par\vspace*{-5pt}
-	\end{center}
-	
-	% --- 5MM VERTICAL SPACE AFTER MASTHEAD ---
-	%\vspace*{5mm} 
-	
-	% --- Calculate Column Widths (These remain the same) ---
+	% --- Calculate Column Widths ---
 	\newlength{\storyonecolumnwidth}
 	\setlength{\storyonecolumnwidth}{0.66\dimexpr\linewidth-3mm\relax}
 	
 	\newlength{\storytwocolumnwidth}
-	\setlength{\storytwocolumnwidth}{0.34\dimexpr\linewidth-3mm\relax}
+	\setlength{\storytwocolumnwidth}{0.33\dimexpr\linewidth-3mm\relax}
 	
 	% The two side-by-side minipages start here.
-	\noindent\begin{minipage}[t]{\storyonecolumnwidth}
+	\setcolumnwidth{\storyonecolumnwidth,\storytwocolumnwidth}
+	\setlength{\columnsep}{6mm}
+	\begin{paracol}{2}
 		% ------------------------------------------------------------------
 		% --- STORY 1: WIDER COLUMN (2/3 width, with Headline) ---
 		% ------------------------------------------------------------------
-		\newspaperheadline{\input{\faryTitle}}
+		\newspaperheadline{\input{\storyTitle}}
 		
-		\byline{By J. Knuth, Tech Correspondent | Cityville, October 16}
+		\byline{By G. P. Texter}
 		
 		% --- START 2-COLUMN TEXT FLOW INSIDE THE MINIPAGE ---
 		\begin{multicols}{2}
-			% Picture of the newspaper
 			\centering
-			\includegraphics[width=\columnwidth, keepaspectratio]{\faryPicture} % Use your actual image filename here
+			\includegraphics[width=\columnwidth, keepaspectratio]{\storyPicture}
 			\par\vspace{2pt}
-			
-			%\begin{figure}[t!]
-			%	\centering
-			%	\includegraphics[width=\columnwidth, height=10cm, keepaspectratio]{\faryPicture}
-			%\end{figure}
-			
+
 			\justify 
 			\input{\story}
 		\end{multicols}
 		% --- END 2-COLUMN TEXT FLOW ---
-		
-	\end{minipage}%
-	% --- VERTICAL LINE ---
-	\hspace*{1.5mm}\vrule\hspace*{1.5mm}%
-	\begin{minipage}[t]{\storytwocolumnwidth}
+
+	\setlength{\columnseprule}{1pt}
+	\switchcolumn
 		% ------------------------------------------------------------------
 		% --- STORY 2: NARROWER COLUMN (1/3 width) ---
 		% ------------------------------------------------------------------
 		
-		% Adjust font size for the sidebar/smaller story
-		\fontsize{10pt}{12pt}\selectfont 
-		
-		% Small local news/sidebar story
-		\textbf{Local News Digest: Quiet Day in the Boroughs}
-		\par\vskip 4pt
-		\lipsum[7-8] 
-		
+		\begin{bookbox}[title=Buchtipp]
+			\noindent
+			\begin{wrapfigure}{r}{0.4\linewidth} % r = rechts, Breite des Bildbereichs
+			\includegraphics[width=\linewidth]{\imageLLMTimesBookcover}
+			\vspace{-20pt}
+			\end{wrapfigure}
+		In ihrem neuesten Buch erklärt Katharina Zweig (Informatikprofessorin an der RPTU) auf anschauliche Weise, 	was wir Large Language Modellen wie ChatGPT zutrauen können und was nicht.\\
+		Sie gibt einen Überblick über die Herausforderungen im Umgang mit KI-generierten Texten und zeigt, wie wir ChatGPT und Co. sinnvoll nutzen können.
+		\end{bookbox}
+
 		\rule{\linewidth}{0.5pt} % Separator line
-		\vskip 3mm
-		
-		\section*{Advertisers Corner}
-		\lipsum[9]
-		\normalsize % Reset font size
-		
-	\end{minipage}
+		\vskip 2mm
+		\large\textbf{"Wir fahren nach Berlin!"}
+		\normalsize
+		\begin{figure}[h]
+		\centering
+		\setlength{\fboxsep}{4pt} % Abstand zwischen Rahmen und Inhalt
+		\fbox{%
+			\begin{minipage}{0.95\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{\imageLLMTimesKarikatur}
+				\vspace{-24pt}
+				% Caption mit einfachem Zeilenabstand
+				{\singlespacing
+				\footnotesize \textit{Automatisch generierte Fakenews haben das Potenzial, seriöse Quellen zu diskreditieren.}
+				}
+			\end{minipage}%
+		}
+		\vspace{-16pt}
+	\end{figure}
+		\justify
+		\begin{sloppypar}
+		Das Algorithm Accountability Lab der RPTU Kaiserslautern-Landau hat es geschafft, es darf auf die re:publica nach Berlin!\\
+		Die Gruppe, die hauptsächlich aus Studierenden der Sozioinformatik besteht, gibt mit ihrem Projekt einen spannenden Einblick in das Studienfach, das sich den Wechselwirkungen von Informatik und Gesellschaft widmet. Interessierte erhalten die Chance spieler\-isch die Funktionsweise von ChatGPT, Gemini und Co. nachzuvollziehen und dabei Wort für Wort ihre eigenen Zeitungsartikel zu generieren. Dies verspricht amüsante Fakenews, regt aber auch zu Diskussionen über die Risiken von KI-generierten Texten als Informationsquelle an. \\
+		Für diejenigen, die nicht bis zur re:publica warten können, stellt die Gruppe eine laienfreundliche Einführung in Large Language Models zur Verfügung:
+		\end{sloppypar}		
+	\end{paracol}
 	
 \end{document}
