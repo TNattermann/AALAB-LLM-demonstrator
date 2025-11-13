@@ -1,0 +1,13 @@
+# Model Configuration
+[model]
+#name = "Qwen/Qwen2.5-0.5B"        # Model identifier
+name = "Qwen/Qwen2.5-3B"        # Model identifier
+
+# Prompt Settings
+[prompt]
+example_prompt = "Es war einmal vor langer Zeit in einem fernen Land"
+max_prompts = 200
+
+# Display Settings
+[display]
+tokens_to_show = 12          # Number of tokens to display in preview

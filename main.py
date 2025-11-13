@@ -20,7 +20,7 @@ from textual.screen import ModalScreen
 
 def load_config():
     try:
-        with open("config.toml", "rb") as f:
+        with open("config_fAIrytale.toml", "rb") as f:
             return tomli.load(f)
     except FileNotFoundError:
         print("Config file not found, using default values")
@@ -178,7 +178,7 @@ class TokenExplorer(App):
             token_strings = self.explorer.get_prompt_tokens_strings()
             prompt_text = "".join(f"[on {probability_to_color(prob)}]{token}[/on]" for token, prob in zip(token_strings, token_probs))
         else:
-            prompt_text = self.explorer.get_prompt()
+            prompt_text = self.explorer.get_prompt()[10:]
             prompt_legend = ""
         return dedent(f"""
 {prompt_text}

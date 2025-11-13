@@ -25,27 +25,31 @@ class Layouter:
         Set correct file index references in variable.txt file
         """
         backgroundFAIrytale = f"\\newcommand{{\\bgimageFAIrytale}}{{{self.path_to_tex}/images/fAIrytale_Vorlage.png}}"
-	backgroundLLMTimes = f"\\newcommand{{\\bgimageLLMTimes}}{{{self.path_to_tex}/images/LLM_Times_Vorlage_Vorlage.png}}"
-	bookCover = f"\\newcommand{{\\imageLLMTimesBookcover}}{{{self.path_to_tex}/images/bookcover.png}}"
-	caricature = f"\\newcommand{{\\imageLLMTimesKarikatur}}{{{self.path_to_tex}/images/LLM_Karikatur.png}}"
+        backgroundLLMTimes = f"\\newcommand{{\\bgimageLLMTimes}}{{{self.path_to_tex}/images/LLM_Times_Vorlage_Vorlage.png}}"
+        bookCover = f"\\newcommand{{\\imageLLMTimesBookcover}}{{{self.path_to_tex}/images/bookcover.png}}"
+        caricature = f"\\newcommand{{\\imageLLMTimesKarikatur}}{{{self.path_to_tex}/images/LLM_Karikatur.png}}"
         headline = f"\\newcommand{{\\storyTitle}}{{../../data/{self.index}_headline.txt}}"
         story = f"\\newcommand{{\\story}}{{../../data/{self.index}_story.txt}}"
         image = f"\\newcommand{{\\storyPicture}}{{../../data/{self.index}_image.png}}"
 
         with open("variable.txt", "w") as file:
             file.write(backgroundFAIrytale + "\n")
-	    file.write(backgroundLLMTimes + "\n")
-	    file.write(bookCover + "\n")
-	    file.write(caricature + "\n")
+            file.write(backgroundLLMTimes + "\n")
+            file.write(bookCover + "\n")
+            file.write(caricature + "\n")
             file.write(headline + "\n")
             file.write(story + "\n")
             file.write(image + "\n")
 
-    def execute_latex(self):
+    def execute_latex(self, mode='LLMTimes'):
         """
         Execute the latex fAIrytale_template.tex and store as pdf
         """
-        tex_file = f"{self.path_to_tex}/fAIrytale_template.tex"
+        print(mode)
+        if mode == 'fAIrytale':
+            tex_file = f"{self.path_to_tex}/fAIrytale_template.tex"
+        if mode == 'LLMTimes':
+            tex_file = f"{self.path_to_tex}/newspaper_template.tex"
         output_dir = f"{self.path_to_data}/data/pdf"
         pdf_name = f"{self.index}.pdf"
         subprocess.run(["pdflatex", f"-output-directory={output_dir}", tex_file], check=True)
@@ -70,7 +74,7 @@ class Layouter:
             subprocess.run(command)
 
 if __name__ == "__main__":
-    x = Layouter('test', "src/Layout", ".")
+    x = Layouter('test', ".", ".")
     x.formatter()
     #x.printer(printer_name = cups.Connection().getDefault())
 
