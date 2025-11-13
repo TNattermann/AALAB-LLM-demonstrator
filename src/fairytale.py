@@ -23,7 +23,7 @@ class Fairytale:
         """
         self.starting_text = starting_text
 
-    def generate_items(self, file_path: str, index: str, run_local=False) -> Dict[bool, str, str]:
+    def generate_items(self, file_path: str, index: str, run_local: bool=False) -> Dict[str, str]:
         """
         Generates a full fairytale and a matching image using OpenAI's API.
 
@@ -35,6 +35,7 @@ class Fairytale:
         Args:
             file_path (str): The base path where output files will be saved.
             index (str): Index of each fairytale.
+            run_local (bool): if True, use local image / text models, otherwise use OpenAI API
             
         Returns:
             dict: A dictionary with keys 'full_text' and 'title'.

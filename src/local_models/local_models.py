@@ -6,7 +6,7 @@ import torch
 import subprocess
 import time
 
-TEXT_MODEL = "mistral" #"llama3"
+TEXT_MODEL = "mistral"#-> 4.4GB #"llama3"
 IMAGE_MODEL = "stabilityai/sd-turbo"
 # "stabilityai/stable-diffusion-v1-4" # about 4 GB
 # "stabilityai/stable-diffusion-v1-5" # about 6 GB
@@ -51,25 +51,25 @@ def generate_story_and_image(prompt: Prompt):
         {'role': 'user', 'content': f'{text_prompt}+{prompt.text_beginning}'}
     ])
     story = response['message']['content']
-    with open("generated_tale.txt", "w", encoding="utf-8") as f:
+    with open("../../data/generated_tale.txt", "w", encoding="utf-8") as f:
         f.write(story)
     print(f"🕒 Step 1 (Story generation): {time.time() - t1:.2f} sec")
 
     # --- Step 2: Summarize story ---
     t2 = time.time()
     response = ollama.chat(model=TEXT_MODEL, messages=[
-        {'role': 'user', 'content': f'Summarize the following tale, using a maximum of 50 words as an instruction for '
+        {'role': 'user', 'content': f'Given the following fairytale, provide an instruction for '
                                     f'a diffusion model to generate a matching image : {story}'}
     ])
     story_summary = response['message']['content']
-    with open("generated_summary.txt", "w", encoding="utf-8") as f:
+    with open("../../data/generated_summary.txt", "w", encoding="utf-8") as f:
         f.write(story_summary)
     print(f"🕒 Step 2 (Summary): {time.time() - t2:.2f} sec")
 
     # --- Step 3: Generate image ---
     t3 = time.time()
     image = pipe(story_summary, num_inference_steps=1).images[0]
-    image_path = "generated_image.png"
+    image_path = "../../data/generated_image.png"
     image.save(image_path)
     print(f"🕒 Step 3 (Image generation): {time.time() - t3:.2f} sec")
 
