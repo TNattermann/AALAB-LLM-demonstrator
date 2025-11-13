@@ -2,7 +2,7 @@
 
 ## Disclaimer
 
-This repo is based on willkurt's [token-explorer repo](https://github.com/willkurt/token-explorer) and was further adapted by the AALAB at RPTU Kaiserslautern for demonstration purposes as a fAIrytale generator for workshops etc.
+This repo is based on willkurt's [token-explorer repo](https://github.com/willkurt/token-explorer) and was further adapted by the AALAB at RPTU Kaiserslautern for demonstration purposes as a fAIrytale or LLMTimes generator for workshops etc.
 
 This ReadME file is adapted accordingly.
 
@@ -22,7 +22,7 @@ Token explore allows you to:
 
 ## Running the app
 
-For full automation of the fairytale generation, a local LaTeX installation in required, such as 
+For full automation of the story generation, a local LaTeX installation in required, such as 
 
 ```bash 
 sudo apt install texlive-full
@@ -36,7 +36,10 @@ Once you have `uv` installed, you can install the dependencies and run the app w
 
 ```bash 
 uv run main.py
+or 
+uv run main.py mode --fAIrytale # --LLMTimes
 ```
+The mode flag allows to switch the required generation version. Default is set to fAIrytale
 
 In case you want to use a joystick, please install `evdev` (sudo pip3 install evdev), then open a separate terminal with root privileges (required for InputDevice control) and run:
 

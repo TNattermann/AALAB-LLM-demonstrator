@@ -5,15 +5,15 @@ from pathlib import Path
 from typing import Dict
 from openai import OpenAI
 
-class Fairytale:
+class StoryCompletion:
     """
-    A class to generate fairytales and matching images using OpenAI's API.
+    A class to generate fairytales / LLMTimes and matching images using OpenAI's API.
 
     Attributes:
         starting_text (str): The beginning text of the fairytale provided at instantiation.
     """
 
-    def __init__(self, starting_text: str):
+    def __init__(self, starting_text: str, config):
         """
         Initializes the Fairytale instance with starting text.
 
@@ -21,6 +21,7 @@ class Fairytale:
             starting_text (str): The initial text that starts the fairytale.
         """
         self.starting_text = starting_text
+        self.config = config
 
     def generate_items(self, file_path: str, index: str) -> Dict[str, str]:
         """
@@ -49,26 +50,11 @@ class Fairytale:
 
         # Set up OpenAI client
         client = OpenAI(api_key=api_key)
-
-        # Generate fairytale text and title
-        old_prompt = (
-            f"Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende "
-            f"und gib den gesamten Text nochmal aus ohne vorherige oder nachgelagerte Erklärungen. "
-            f"Die Geschichte sollte maximal 300 Wörter lang sein. "
-            f"Danach schreibe einen kurzen, prägnanten Titel zu dieser Geschichte. "
-            f"Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch.\n\n"
-        )
-        text_prompt = (
-            f"Based on the following fairytale starting text, write a completed fairytale of at most 300 words "
-            f"in the same language like the starting text, "
-            f"Generate the full story including the starting text as a floating text without intermediate titles! "
-            f"After that, generate a beautiful, short and creative title for this story, also in the same language.\n"
-            f"Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.\n"
-            f"\nStarting Text:\n{self.starting_text}"
-        )
+        text_prompt = self.config["text_completion"]["prompt"]  + self.starting_text
+        print(text_prompt)
 
         text_response = client.chat.completions.create(
-            model = "gpt-4o-mini",
+            model = self.config["text_completion"]["name"],
             messages = [
                 {"role": "user", "content": text_prompt}
             ],
@@ -106,17 +92,13 @@ class Fairytale:
             full_text_file.write(full_text)
 
         # Generate an image matching the title and full_text
-        image_prompt = (
-            f"Create a beautiful, colorful and imaginative squared format illustration without text"
-            f"for the following fairytale '{title}':\n\n"
-            f"{full_text}"
-        )
+        image_prompt = self.config["image_completion"]["prompt"] + full_text
 
         image_response = client.images.generate(
-            model = "gpt-image-1",
+            model = self.config["image_completion"]["name"],
             prompt = image_prompt,
-            #size = "1024x1536"
-            size = "1024x1024"
+            quality = self.config["image_completion"]["quality"],
+            size = self.config["image_completion"]["size"]
         )
 
         image_base64 = image_response.data[0].b64_json

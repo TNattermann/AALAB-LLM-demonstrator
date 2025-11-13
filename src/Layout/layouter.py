@@ -8,8 +8,9 @@ class Layouter:
     Class that combines standalone image, text and headline into a formatted pdf and prints
     """
 
-    def __init__(self, index, path_to_tex = ".", path_to_data = "../.."):
+    def __init__(self, index, mode, path_to_tex = ".", path_to_data = "../.."):
         self.index = index  # combination of prompt index and timestamp
+        self.mode = mode
         self.path_to_tex = path_to_tex
         self.path_to_data = path_to_data
 
@@ -25,8 +26,8 @@ class Layouter:
         Set correct file index references in variable.txt file
         """
         backgroundFAIrytale = f"\\newcommand{{\\bgimageFAIrytale}}{{{self.path_to_tex}/images/fAIrytale_Vorlage.png}}"
-        backgroundLLMTimes = f"\\newcommand{{\\bgimageLLMTimes}}{{{self.path_to_tex}/images/LLM_Times_Vorlage_Vorlage.png}}"
-        bookCover = f"\\newcommand{{\\imageLLMTimesBookcover}}{{{self.path_to_tex}/images/bookcover.png}}"
+        backgroundLLMTimes = f"\\newcommand{{\\bgimageLLMTimes}}{{{self.path_to_tex}/images/LLM_Times_Vorlage.png}}"
+        bookCover = f"\\newcommand{{\\imageLLMTimesBookcover}}{{{self.path_to_tex}/images/bookcover.jpeg}}"
         caricature = f"\\newcommand{{\\imageLLMTimesKarikatur}}{{{self.path_to_tex}/images/LLM_Karikatur.png}}"
         headline = f"\\newcommand{{\\storyTitle}}{{../../data/{self.index}_headline.txt}}"
         story = f"\\newcommand{{\\story}}{{../../data/{self.index}_story.txt}}"
@@ -41,14 +42,13 @@ class Layouter:
             file.write(story + "\n")
             file.write(image + "\n")
 
-    def execute_latex(self, mode='LLMTimes'):
+    def execute_latex(self):
         """
         Execute the latex fAIrytale_template.tex and store as pdf
         """
-        print(mode)
-        if mode == 'fAIrytale':
+        if self.mode == 'fAIrytale':
             tex_file = f"{self.path_to_tex}/fAIrytale_template.tex"
-        if mode == 'LLMTimes':
+        if self.mode == 'LLMTimes':
             tex_file = f"{self.path_to_tex}/newspaper_template.tex"
         output_dir = f"{self.path_to_data}/data/pdf"
         pdf_name = f"{self.index}.pdf"
@@ -74,7 +74,7 @@ class Layouter:
             subprocess.run(command)
 
 if __name__ == "__main__":
-    x = Layouter('test', ".", ".")
+    x = Layouter('test', ".", "../..")
     x.formatter()
     #x.printer(printer_name = cups.Connection().getDefault())
 

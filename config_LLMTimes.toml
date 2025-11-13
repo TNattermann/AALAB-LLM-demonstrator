@@ -5,9 +5,49 @@ name = "Qwen/Qwen2.5-3B"        # Model identifier
 
 # Prompt Settings
 [prompt]
-example_prompt = "Es war einmal vor langer Zeit in einem fernen Land"
+hidden_prompt = ""
+
+
+hidden_prompt_l = """
+                Schreibe einen fertigen, journalistisch seriösen und detaillierten Zeitungsartikel für die Printausgabe
+                 der LLM-Times über die Weihnachtsfeier der Sozioinformatik in Kaiserslautern.
+                 Mache den Text persönlicher, indem du Namen von Leuten einfügst und O-Töne wiedergibst.
+                 Schreibe nur den Textkörper, keine Überschriften oder sonstigen Paratexte, vermeide Platzhalter und
+                 stelle keine Rückfragen. Der Text bekommt keine redaktionelle Überarbeitung mehr und muss fertig
+                 zum Druck sein. Beginne mit
+                """
+german_prompt = "Am 29.11.2025 fand in Kaiserslautern die Weihnachtsfeier der Sozioinformatik statt."
+english_prompt = "On November 29, 2025, the Christmas party of the Socioinformatics department took place in Kaiserslautern."
 max_prompts = 200
 
 # Display Settings
 [display]
 tokens_to_show = 12          # Number of tokens to display in preview
+
+# OpenAI model completion
+[text_completion]
+name = "gpt-4o-mini"
+prompt = """
+        Based on the following newsreport starting text for the LLMTimes, finalize the report of at most 300 words in
+        the same language like the starting text, making it an extraordinary event that needs to be reported on.
+        Generate the full story including the starting text as a floating text without intermediate titles!
+        After that, generate a catchy and short title for this report, also in the same language.
+        Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.
+
+        Starting Text:
+        """
+
+[image_completion]
+name = "gpt-image-1-mini" # dall-e-3
+prompt = """
+        A square-format (1:1) photorealistic editorial photograph inspired by the described news report.
+        Captured in the style of professional photojournalism (Reuters, AP, Getty Images).
+        Realistic people, clothing, and environment — authentic lighting, natural colors, true-to-life materials and weather conditions.
+        DSLR quality with crisp focus, shallow depth of field, subtle motion blur where appropriate, and genuine human emotion.
+        Shot with a 35mm lens at f/2.8, ISO 400.
+        Dynamic yet believable composition that captures the mood and setting of the event.
+        No text, no captions, no illustrations — strictly photorealistic documentary style.
+        """
+# Create a vivid, eye-catching, square-format illustration (1:1 aspect ratio) inspired by the following news report. Do not include any text or captions in the image. Focus on conveying the mood, setting, and key themes visually — use dynamic composition, rich colors, and expressive lighting.
+quality = "low" # standard
+size = "1024x1024"
