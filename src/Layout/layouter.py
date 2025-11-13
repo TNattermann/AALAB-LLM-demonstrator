@@ -25,18 +25,18 @@ class Layouter:
         Set correct file index references in variable.txt file
         """
         backgroundFAIrytale = f"\\newcommand{{\\bgimageFAIrytale}}{{{self.path_to_tex}/images/fAIrytale_Vorlage.png}}"
-	backgroundLLMTimes = f"\\newcommand{{\\bgimageLLMTimes}}{{{self.path_to_tex}/images/LLM_Times_Vorlage_Vorlage.png}}"
-	bookCover = f"\\newcommand{{\\imageLLMTimesBookcover}}{{{self.path_to_tex}/images/bookcover.png}}"
-	caricature = f"\\newcommand{{\\imageLLMTimesKarikatur}}{{{self.path_to_tex}/images/LLM_Karikatur.png}}"
+        backgroundLLMTimes = f"\\newcommand{{\\bgimageLLMTimes}}{{{self.path_to_tex}/images/LLM_Times_Vorlage_Vorlage.png}}"
+        bookCover = f"\\newcommand{{\\imageLLMTimesBookcover}}{{{self.path_to_tex}/images/bookcover.png}}"
+        caricature = f"\\newcommand{{\\imageLLMTimesKarikatur}}{{{self.path_to_tex}/images/LLM_Karikatur.png}}"
         headline = f"\\newcommand{{\\storyTitle}}{{../../data/{self.index}_headline.txt}}"
         story = f"\\newcommand{{\\story}}{{../../data/{self.index}_story.txt}}"
         image = f"\\newcommand{{\\storyPicture}}{{../../data/{self.index}_image.png}}"
 
         with open("variable.txt", "w") as file:
             file.write(backgroundFAIrytale + "\n")
-	    file.write(backgroundLLMTimes + "\n")
-	    file.write(bookCover + "\n")
-	    file.write(caricature + "\n")
+            file.write(backgroundLLMTimes + "\n")
+            file.write(bookCover + "\n")
+            file.write(caricature + "\n")
             file.write(headline + "\n")
             file.write(story + "\n")
             file.write(image + "\n")
