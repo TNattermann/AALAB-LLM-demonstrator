@@ -37,7 +37,7 @@ Once you have `uv` installed, you can install the dependencies and run the app w
 ```bash 
 uv run main.py
 or 
-uv run main.py mode --fAIrytale # --LLMTimes
+uv run main.py --mode fAIrytale # LLMTimes
 ```
 The mode flag allows to switch the required generation version. Default is set to fAIrytale
 
