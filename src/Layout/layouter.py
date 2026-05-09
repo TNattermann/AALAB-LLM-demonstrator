@@ -52,7 +52,16 @@ class Layouter:
             tex_file = f"{self.path_to_tex}/newspaper_template.tex"
         output_dir = f"{self.path_to_data}/data/pdf"
         pdf_name = f"{self.index}.pdf"
-        subprocess.run(["pdflatex", f"-output-directory={output_dir}", tex_file], check=True)
+        subprocess.run(
+            [
+                "pdflatex",
+                f"-output-directory={output_dir}",
+                tex_file
+            ],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
 
         # Change name of PDF file
         base_pdf_name = os.path.splitext(os.path.basename(tex_file))[0] + ".pdf"

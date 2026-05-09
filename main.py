@@ -14,14 +14,15 @@ import tomli
 from datetime import datetime
 from textual.app import App, ComposeResult
 import asyncio
-from textual.containers import Container
-from textual.widgets import LoadingIndicator, Footer, Header, Static, DataTable
-from textual.screen import ModalScreen
+from textual.containers import Horizontal, Vertical
+from textual.widgets import LoadingIndicator, Footer, Header, Static, DataTable, Label
 
 
 class TokenExplorer(App):
     """Main application class."""
 
+    stop_text_animation: bool = False
+    index: str = ""
     CSS = """
     .hidden {
         display: none;
@@ -32,6 +33,14 @@ class TokenExplorer(App):
         align: center middle;
         height: 5;
     }
+    
+    #overlay_container {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);  /* semi-transparent overlay */
+    content-align: center middle;
+    layer: overlay;               /* float above all other widgets */
+}
     """
 
     display_modes = cycle(["prompt", "prob", "entropy"])
@@ -63,10 +72,11 @@ class TokenExplorer(App):
         self.prompt_en = self.config["prompt"]["english_prompt"]
         self.tokens_to_show = self.config["display"]["tokens_to_show"]
         self.max_prompts = self.config["prompt"]["max_prompts"]
+        self.testing = self.config["debugging"]["testing"]
 
         self.prompts = [self.prompt, self.prompt_en, self.prompt]
         self.prompt_index = 2
-        self.index = None
+        self.index = ""
         self.explorer = Explorer(self.config, self.model_name)
         self.explorer.set_prompt(self.hidden_prompt+self.prompt)
         self.rows = self._top_tokens_to_rows(
@@ -253,23 +263,195 @@ class TokenExplorer(App):
         self.query_one("#results", Static).update(self._render_prompt())
 
     async def action_save_prompt(self):
-        spinner = self.query_one("#spinner", LoadingIndicator)
-        spinner.remove_class("hidden")  # Show spinner
-        try:
-            await asyncio.to_thread(self._save_prompt_work)
-        finally:
-            spinner.add_class("hidden")  # Hide spinner
-
-    def _save_prompt_work(self):
-        # This is the blocking work, run in background thread
+        prompt_text = self.explorer.get_prompt()
         self.index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+
+        # =========================================================
+        # Overlay Setup
+        # =========================================================
+
+        # --- Spinner ---
+        spinner = LoadingIndicator(id="spinner")
+        spinner.styles.margin = (1, 0, 2, 0)
+
+        # --- Initial loading label ---
+        spinner_label = Label(
+            "Completing your story...",
+            id="spinner_label"
+        )
+
+        spinner_label.styles.color = "white"
+        spinner_label.styles.bold = True
+        spinner_label.styles.width = "100%"
+        spinner_label.styles.content_align = ("center", "middle")
+        spinner_label.styles.padding = (1, 2)
+
+        # --- Crawling text label ---
+        anim_label = Label("", id="animation_label")
+
+        anim_label.styles.color = "white"
+        anim_label.styles.bold = True
+
+        # Bigger text canvas
+        anim_label.styles.width = "90%"
+        anim_label.styles.height = "auto"
+        anim_label.styles.min_height = 20
+
+        # Wrapping
+        anim_label.styles.text_wrap = "wrap"
+
+        # Internal spacing
+        anim_label.styles.padding = (2, 4)
+
+        # Visual styling
+        anim_label.styles.background = "#1e1e1e"
+        anim_label.styles.border = ("round", "white")
+
+        # Hide initially
+        anim_label.styles.display = "none"
+
+        # --- Overlay container ---
+        overlay = Vertical(
+            spinner,
+            spinner_label,
+            anim_label,
+            id="overlay_container"
+        )
+
+        overlay.styles.width = "100%"
+        overlay.styles.height = "100%"
+
+        overlay.styles.align = ("center", "middle")
+
+        overlay.styles.padding = (3, 6)
+
+        overlay.styles.layer = "overlay"
+
+        overlay.styles.background = "rgba(0,0,0,0.75)"
+
+        # Mount overlay
+        await self.mount(overlay)
+
+        # =========================================================
+        # Phase 1: Initial blocking work
+        # =========================================================
+
+        await asyncio.to_thread(
+            self._save_prompt_work_partial,
+            prompt_text
+        )
+
+        # =========================================================
+        # Phase 2: Generate story text
+        # =========================================================
+
+        ft = StoryCompletion(prompt_text, self.config)
+
+        generated_text_file = (
+            f"data/{self.index}_story.txt"
+        )
+
+        await asyncio.to_thread(
+            ft.generate_text,
+            "data/",
+            self.index
+        )
+
+        # =========================================================
+        # Transition to crawling animation
+        # =========================================================
+
+        spinner.styles.display = "none"
+        spinner_label.styles.display = "none"
+
+        anim_label.styles.display = "block"
+
+        # =========================================================
+        # Crawling text animation
+        # =========================================================
+
+        self.stop_text_animation = False
+
+        async def animate_label():
+
+            with open(
+                    generated_text_file,
+                    "r",
+                    encoding="utf-8"
+            ) as f:
+
+                text = f.read()
+
+            words = text.split()
+
+            current_text = ""
+
+            for word in words:
+
+                if self.stop_text_animation:
+                    break
+
+                current_text += word + " "
+
+                anim_label.update(current_text)
+
+                await asyncio.sleep(0.15)
+
+            # Ensure full text visible if animation finishes naturally
+            if not self.stop_text_animation:
+                anim_label.update(text)
+
+        animation_task = asyncio.create_task(
+            animate_label()
+        )
+
+        # =========================================================
+        # Remaining heavy work
+        # =========================================================
+
+        background_task = asyncio.create_task(
+            asyncio.to_thread(
+                self._save_prompt_work_final,
+                prompt_text
+            )
+        )
+
+        # Wait until one finishes first
+        done, pending = await asyncio.wait(
+            [animation_task, background_task],
+            return_when=asyncio.FIRST_COMPLETED
+        )
+
+        # Stop animation if backend finishes first
+        self.stop_text_animation = True
+
+        # Finish remaining tasks cleanly
+        await asyncio.gather(
+            *pending,
+            return_exceptions=True
+        )
+
+        # =========================================================
+        # Cleanup
+        # =========================================================
+
+        await overlay.remove()
+
+    def _save_prompt_work_partial(self, prompt_text):
+        """Blocking work before text generation"""
+        # Save the prompt to file
         with open(f"data/prompts/prompt_{self.index}.txt", "w") as f:
-            f.write(self.explorer.get_prompt())
-        ft = StoryCompletion(self.explorer.get_prompt(), self.config)
-        ft.generate_items("data/", self.index)
+            f.write(prompt_text)
+
+    def _save_prompt_work_final(self, prompt_text):
+        """Blocking work after text generation"""
+        ft = StoryCompletion(prompt_text, self.config)
+        ft.generate_image("data/", self.index)
+
         layouter = Layouter(self.index, self.mode, path_to_tex="src/Layout", path_to_data=".")
         layouter.formatter()
-        # layouter.printer()
+        if not self.testing:
+            layouter.printer()
 
     def action_select_next(self):
         """Move selection down one row"""

@@ -1,3 +1,7 @@
+# Debugging
+[debugging]
+testing = true
+
 # Model Configuration
 [model]
 #name = "Qwen/Qwen2.5-0.5B"        # Model identifier
