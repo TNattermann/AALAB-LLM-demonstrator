@@ -20,8 +20,8 @@ hidden_prompt_l = """
                  stelle keine Rückfragen. Der Text bekommt keine redaktionelle Überarbeitung mehr und muss fertig
                  zum Druck sein. Beginne mit
                 """
-german_prompt = "Am 29.11.2025 fand in Kaiserslautern die Weihnachtsfeier der Sozioinformatik statt."
-english_prompt = "On November 29, 2025, the Christmas party of the Socioinformatics department took place in Kaiserslautern."
+german_prompt = "In Berlin beginnt die re:publica Messe zu den Themen Digitales und Gesellschaft."
+english_prompt = "In Berlin, the re:publica conference begins, focusing on digital topics and society."
 max_prompts = 200
 
 # Display Settings
@@ -66,7 +66,7 @@ name = "gpt-image-1-mini" # dall-e-3
 #        """
 prompt = """
          A square-format (1:1) image inspired by the described news report. Dynamic yet believable composition
-         that captures the mood and setting of the event. No text, no captions, no illustrations.
+         that captures the mood and setting of the event. No text, no captions, no illustrations, no banners.
          """
 quality = "low" # standard
 size = "1024x1024"
