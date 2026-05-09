@@ -54,7 +54,7 @@ prompt = """
         """
 
 [image_completion]
-name = "gpt-image-1-mini" # dall-e-3
+name = "gpt-image-1-mini" # gpt-image-2
 #prompt = """
 #        A square-format (1:1) photorealistic editorial photograph inspired by the described news report.
 #        Captured in the style of professional photojournalism (Reuters, AP, Getty Images).
@@ -68,5 +68,5 @@ prompt = """
          A square-format (1:1) image inspired by the described news report. Dynamic yet believable composition
          that captures the mood and setting of the event. No text, no captions, no illustrations, no banners.
          """
-quality = "low" # standard
+quality = "low" # low,medium,high
 size = "1024x1024"

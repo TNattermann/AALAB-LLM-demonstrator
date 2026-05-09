@@ -397,10 +397,6 @@ class TokenExplorer(App):
 
                 await asyncio.sleep(0.15)
 
-            # Ensure full text visible if animation finishes naturally
-            if not self.stop_text_animation:
-                anim_label.update(text)
-
         animation_task = asyncio.create_task(
             animate_label()
         )
