@@ -1,6 +1,6 @@
 # Debugging
 [debugging]
-testing = true
+testing = false
 
 # Model Configuration
 [model]
