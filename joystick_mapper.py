@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import sys
+import os
+import subprocess
 import time
 from evdev import InputDevice, list_devices, ecodes, UInput
 
@@ -11,7 +13,7 @@ DEADZONE = 20  # Adjust for joystick sensitivity
 # === Button to Key Sequence Mapping for New Joysticks (SPEEDLINK) ===
 button_map = {
     ecodes.BTN_NORTH: [ecodes.KEY_W, ecodes.KEY_D], # Deutsch - Links Oben
-    #ecodes.BTN_EAST:  [], # unbelegt - Rechts Unten
+    #ecodes.BTN_EAST:  "RESTART_MODE", # wechselt LLMTimes & fAIrytale
     ecodes.BTN_WEST: [ecodes.KEY_X], # Save - Links Unten
     ecodes.BTN_SOUTH: [ecodes.KEY_W, ecodes.KEY_W, ecodes.KEY_D] # Rechts Oben - english
 }
@@ -23,7 +25,7 @@ for path in list_devices():
         print('Using setup for old Joystick')
         button_map = {
             ecodes.BTN_TRIGGER: [ecodes.KEY_W, ecodes.KEY_D],  # Deutsch - Links Oben
-            # ecodes.BTN_EAST:  [], # unbelegt - Rechts Unten
+            #ecodes.BTN_EAST:  "RESTART_MODE", # wechselt LLMTimes & fAIrytale
             ecodes.BTN_THUMB2: [ecodes.KEY_X],  # Save - Links Unten
             ecodes.BTN_THUMB: [ecodes.KEY_W, ecodes.KEY_W, ecodes.KEY_D]  # Rechts Oben - english
         }
@@ -66,7 +68,16 @@ def find_device_by_name(fragment_list):
 # === Helper: Emit key sequence for button press ===
 def trigger_button_sequence(button_code, ui):
     global last_execution_time
-    cooldown_period = 10 if button_map.get(button_code, [])[0] == ecodes.KEY_X else 2 # dynamic cooldown setting
+    action = button_map.get(button_code)
+    # ===============================
+    # SPECIAL ACTION: RESTART MODE
+    # ===============================
+    if action == "RESTART_MODE":
+        print("Restarting with opposite mode...")
+        restart_with_other_mode()
+        return
+
+    cooldown_period = 10 if action and isinstance(action, list) and action[0] == ecodes.KEY_X else 2 # dynamic cooldown setting
  # Check if enough time has passed since last execution
     current_time = time.time()
     if button_code in last_execution_time and (current_time - last_execution_time[button_code]) < cooldown_period:
@@ -81,6 +92,19 @@ def trigger_button_sequence(button_code, ui):
         ui.write(ecodes.EV_KEY, key, 0)  # Key up
         ui.syn()
         time.sleep(0.05)
+
+# === Helper: Restart with other mode ===
+def restart_with_other_mode():
+    args = sys.argv.copy()
+    if "--mode" in args:
+        idx = args.index("--mode") + 1
+        if idx < len(args):
+            current = args[idx]
+            args[idx] = "fAIrytale" if current == "LLMTimes" else "LLMTimes"
+    else:
+        args += ["--mode", "LLMTimes"]
+    subprocess.Popen([sys.executable] + args)
+    os._exit(0)
 
 # === Main loop ===
 def main():
