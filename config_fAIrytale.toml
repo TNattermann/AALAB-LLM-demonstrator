@@ -4,8 +4,8 @@ testing = true
 
 # Model Configuration
 [model]
-#name = "Qwen/Qwen2.5-0.5B"        # Model identifier
-name = "Qwen/Qwen2.5-3B"        # Model identifier
+name = "Qwen/Qwen2.5-0.5B"        # Model identifier
+#name = "Qwen/Qwen2.5-3B"        # Model identifier
 
 # Prompt Settings
 [prompt]
@@ -31,11 +31,22 @@ prompt = """
         Starting Text:
         """
 
+[image_prompt_generation]
+name = "gpt-4o-mini"
+prompt = """
+        Based on the following fairytale, generate a short image prompt for the image API that
+        captures the key aspects of the generated story. This prompt needs to align with the OpenAI guidelines for
+        image generation (e.g. no trademarks used, no person of interest mentioned).
+        Format the response as JSON object, with 'img_prompt' as key.
+
+        Fairytale Text:
+        """
+
 [image_completion]
 name = "gpt-image-1-mini"
 prompt = """
         Create a beautiful, colorful and imaginative squared format illustration without text
-        for the following fairytale
+        for the following fairytale:
         """
 quality = "low"
 size = "1024x1024"
