@@ -60,7 +60,7 @@ class Layouter:
             ],
             check=True,
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
+            #stderr=subprocess.DEVNULL
         )
 
         # Change name of PDF file

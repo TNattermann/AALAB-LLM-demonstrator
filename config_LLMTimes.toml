@@ -2,6 +2,10 @@
 [debugging]
 testing = false
 
+# printer settings
+[printer]
+num_prints = 1
+
 # Model Configuration
 [model]
 #name = "Qwen/Qwen2.5-0.5B"        # Model identifier
@@ -19,8 +23,8 @@ hidden_prompt_l = """
                  stelle keine Rückfragen. Der Text bekommt keine redaktionelle Überarbeitung mehr und muss fertig
                  zum Druck sein. Beginne mit
                 """
-german_prompt = "Am 13. Mai 2026 fand an der RPTU in Kaiserslautern der Studieninformationstag statt."
-english_prompt = "Schule explodiert nach Nutzung von ChatGPT im Chemieunterricht. Mit Sozioinformatik wäre das nicht passiert!"
+german_prompt = "Sozioinformatik: Was ist denn das? Viele interessierte Schüler:innen"
+english_prompt = "Never heard about socioinformatics? Many students"
 max_prompts = 200
 
 # Display Settings
@@ -32,7 +36,7 @@ tokens_to_show = 12          # Number of tokens to display in preview
 name = "gpt-4o-mini"
 prompt = """
         Based on the following newsreport starting text for the LLMTimes, finalize the report of at most 300 words in
-        the same language like the starting text, making it an extraordinary event that needs to be reported on.
+        the same language like the starting text, making it an extraordinary story that needs to be reported on.
         Generate the full story including the starting text as a floating text without intermediate titles!
         After that, generate a catchy and short title for this report, also in the same language.
         Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.
