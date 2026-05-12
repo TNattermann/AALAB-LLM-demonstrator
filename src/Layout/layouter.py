@@ -71,7 +71,7 @@ class Layouter:
         shutil.move(generated_pdf_path, final_pdf_path)
 
 
-    def printer(self, copies=2, printer_name=None):
+    def printer(self, copies=1, printer_name=None):
         """
         Prints final pdf
         """
