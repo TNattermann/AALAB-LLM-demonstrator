@@ -2,10 +2,14 @@
 [debugging]
 testing = false
 
+# printer settings
+[printer]
+num_prints = 1
+
 # Model Configuration
 [model]
-name = "Qwen/Qwen2.5-0.5B"        # Model identifier
-#name = "Qwen/Qwen2.5-3B"        # Model identifier
+#name = "Qwen/Qwen2.5-0.5B"        # Model identifier
+name = "Qwen/Qwen2.5-3B"        # Model identifier
 
 # Prompt Settings
 [prompt]
@@ -14,8 +18,7 @@ hidden_prompt = ""
 
 hidden_prompt_l = """
                 Schreibe einen fertigen, journalistisch seriösen und detaillierten Zeitungsartikel für die Printausgabe
-                 der LLM-Times über die Weihnachtsfeier der Sozioinformatik in Kaiserslautern.
-                 Mache den Text persönlicher, indem du Namen von Leuten einfügst und O-Töne wiedergibst.
+                 der LLM-Times.
                  Schreibe nur den Textkörper, keine Überschriften oder sonstigen Paratexte, vermeide Platzhalter und
                  stelle keine Rückfragen. Der Text bekommt keine redaktionelle Überarbeitung mehr und muss fertig
                  zum Druck sein. Beginne mit

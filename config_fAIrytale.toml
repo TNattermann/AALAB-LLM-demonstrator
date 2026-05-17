@@ -2,6 +2,10 @@
 [debugging]
 testing = false
 
+# printer settings
+[printer]
+num_prints = 1
+
 # Model Configuration
 [model]
 name = "Qwen/Qwen2.5-0.5B"        # Model identifier

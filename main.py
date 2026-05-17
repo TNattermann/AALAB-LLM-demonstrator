@@ -447,7 +447,7 @@ class TokenExplorer(App):
         layouter = Layouter(self.index, self.mode, path_to_tex="src/Layout", path_to_data=".")
         layouter.formatter()
         if not self.testing:
-            layouter.printer()
+            layouter.printer(copies=self.config["printer"]["num_prints"])
 
     def action_select_next(self):
         """Move selection down one row"""
