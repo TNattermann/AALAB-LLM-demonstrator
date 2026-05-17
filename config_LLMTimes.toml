@@ -32,13 +32,13 @@ tokens_to_show = 12          # Number of tokens to display in preview
 [text_completion]
 name = "gpt-4o-mini"
 prompt = """
-        Based on the following newsreport starting text for the LLMTimes, finalize the report of at most 300 words in
+        Based on the following newsreport starting text for the LLMTimes, finalize the report of at most 350 words in
         the same language like the starting text, making it an extraordinary event that needs to be reported on.
-        Generate the full story including the starting text as a floating text without intermediate titles!
-        After that, generate a catchy and short title for this report, also in the same language.
+        Generate the full story including the starting text as a floating text without intermediate titles and no dates!
+        After that, generate a catchy and short title for this report without using dates, also in the same language.
         Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.
 
-        Starting Text:
+        Starting Text: Berlin --
         """
 
 # OpenAI prompt generation
