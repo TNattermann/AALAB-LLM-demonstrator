@@ -23,8 +23,8 @@ hidden_prompt_l = """
                  stelle keine Rückfragen. Der Text bekommt keine redaktionelle Überarbeitung mehr und muss fertig
                  zum Druck sein. Beginne mit
                 """
-german_prompt = "In Berlin beginnt die re:publica Messe zu den Themen Digitales und Gesellschaft."
-english_prompt = "In Berlin, the re:publica conference begins, focusing on digital topics and society."
+german_prompt = "Heute beginnt die re:publica Messe zu den Themen Digitales und Gesellschaft."
+english_prompt = "Today, re:publica conference begins, focusing on digital topics and society."
 max_prompts = 200
 
 # Display Settings
