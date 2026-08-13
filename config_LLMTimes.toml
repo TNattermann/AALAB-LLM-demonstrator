@@ -15,14 +15,6 @@ name = "Qwen/Qwen2.5-3B"        # Model identifier
 [prompt]
 hidden_prompt = """Write a moral lesson for the end of a paedagical fable or story starting with:"""
 
-
-hidden_prompt_l = """
-                Schreibe einen fertigen, journalistisch seriösen und detaillierten Zeitungsartikel für die Printausgabe
-                 der LLM-Times.
-                 Schreibe nur den Textkörper, keine Überschriften oder sonstigen Paratexte, vermeide Platzhalter und
-                 stelle keine Rückfragen. Der Text bekommt keine redaktionelle Überarbeitung mehr und muss fertig
-                 zum Druck sein. Beginne mit
-                """
 german_prompt = "Und die Moral von der Geschichte: "
 english_prompt = "And the moral of this story: "
 max_prompts = 200

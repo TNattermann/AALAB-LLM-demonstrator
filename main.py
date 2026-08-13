@@ -78,7 +78,7 @@ class TokenExplorer(App):
         self.prompt_index = 2
         self.index = ""
         self.explorer = Explorer(self.config, self.model_name)
-        self.explorer.set_prompt(self.hidden_prompt+self.prompt)
+        self.explorer.set_prompt(self.prompt)
         self.rows = self._top_tokens_to_rows(
             self.explorer.get_top_n_tokens(n=self.tokens_to_show)
             )
@@ -191,7 +191,12 @@ class TokenExplorer(App):
             token_strings = self.explorer.get_prompt_tokens_strings()
             prompt_text = "".join(f"[on {probability_to_color(prob)}]{token}[/on]" for token, prob in zip(token_strings, token_probs))
         else:
-            prompt_text = self.explorer.get_prompt()[len(self.hidden_prompt):] # slice hidden prompt
+            prompt = self.explorer.get_prompt()
+
+            if prompt.startswith(self.hidden_prompt):
+                prompt_text = prompt.removeprefix(self.hidden_prompt)
+            else:
+                prompt_text = prompt
             prompt_legend = ""
         return dedent(f"""
 {prompt_text}
