@@ -3,6 +3,6 @@
 \newcommand{\imageLLMTimesBookcover}{images/bookcover.jpeg}
 \newcommand{\imageLLMTimesKarikatur}{images/LLM_Karikatur.png}
 \newcommand{\qrCode}{images/RPTU_QR.png}
-\newcommand{\storyTitle}{../../data/test_headline.txt}
-\newcommand{\story}{../../data/test_story.txt}
-\newcommand{\storyPicture}{../../data/test_image.png}
+\newcommand{\storyTitle}{../../data/12_2026-05-20_17-49-11_headline.txt}
+\newcommand{\story}{../../data/12_2026-05-20_17-49-11_story.txt}
+\newcommand{\storyPicture}{../../data/12_2026-05-20_17-49-11_image.png}

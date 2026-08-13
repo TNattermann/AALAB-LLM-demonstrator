@@ -1,0 +1,13 @@
+Berlin --  Amber buys two sets of candles for parties. She needs an additional set for each guest attending more than one party. If 10% of the guests attend both parties, and each set contains 5 candles, how many candles does she need in total? To solve this problem, we need to consider the following steps:
+
+1. Determine the number of guests attending both parties.
+2. Calculate the total number of guests attending each party, factoring in those who attend both events.
+3. Multiply the total number of required sets of candles (both for unique guests and for those who attended both parties) by the number of candles in each set.
+
+This straightforward calculation took a surprising turn when Amber realized she was overlooking the fact that her parties had ballooned in size and excitement. As she calculated her needs, a wave of creativity washed over her. Inspired by her guests' interests and the fervor surrounding the parties, Amber decided to incorporate a thematic twist with artisanal candles reflecting the mood of her gatherings. 
+
+Word spread on social media about Amber's grand parties and the unique candle theme. Soon, more guests RSVP'd, pushing the numbers higher than she anticipated, as different communities became excited to join. The simple task of buying candles turned into a large-scale event event with local artisans wanting to contribute handmade creations, each with their sustainability story to tell.
+
+With the new interest, Amber realized she would need a candlelit display worthy of an even larger crowd. She began connecting with local vendors, building a vibrant community around her gatherings, while also promoting local craftsmanship. The initiative spiraled into a movement advocating for eco-friendly celebrations, turning local festivities into a spotlight for artisans. 
+
+With the candles all set to be produced and the excitement building, Amber’s party has turned not just into a celebration but an extraordinary local affair promoting unity, creativity, and sustainability, showcasing how a simple calculation could light the flame for an unforgettable movement.

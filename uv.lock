@@ -2155,6 +2155,7 @@ requires-dist = [
     { name = "openai" },
     { name = "pycups", specifier = ">=2.0.1" },
     { name = "pytest", specifier = ">=8.3.5" },
+    { name = "textual", specifier = ">=0.44.0" },
     { name = "textual", specifier = ">=2.1.2" },
     { name = "textual-dev", specifier = ">=1.7.0" },
     { name = "tomli", specifier = ">=2.2.1" },
