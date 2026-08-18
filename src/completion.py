@@ -26,7 +26,14 @@ class StoryCompletion:
         self.full_text = "This is a story about a cute little minion with a spoon in his hand."
         self.title = ""
         self.prompt_prefix = self.config["image_completion"]["prompt"]
+        self.hidden_prompt = self.config["prompt"]["hidden_prompt"]
+        self.hidden_prompt_en = self.config["prompt"]["hidden_prompt_en"]
         self.img_prompt = "Nice flower"
+
+        if self.starting_text.startswith(self.hidden_prompt):
+            self.starting_text = self.starting_text.removeprefix(self.hidden_prompt)
+        if self.starting_text.startswith(self.hidden_prompt_en):
+            self.starting_text = self.starting_text.removeprefix(self.hidden_prompt_en)
 
         if not self.api_key_path.exists():
             raise FileNotFoundError(f"API key file not found at: {self.api_key_path}")

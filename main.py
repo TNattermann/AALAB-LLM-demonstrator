@@ -68,13 +68,14 @@ class TokenExplorer(App):
         self.config = self.load_config()
         self.model_name = self.config["model"]["name"]
         self.hidden_prompt = self.config["prompt"]["hidden_prompt"]
+        self.hidden_prompt_en = self.config["prompt"]["hidden_prompt_en"]
         self.prompt = self.config["prompt"]["german_prompt"]
         self.prompt_en = self.config["prompt"]["english_prompt"]
         self.tokens_to_show = self.config["display"]["tokens_to_show"]
         self.max_prompts = self.config["prompt"]["max_prompts"]
         self.testing = self.config["debugging"]["testing"]
 
-        self.prompts = [self.prompt, self.prompt_en, self.prompt]
+        self.prompts = [self.hidden_prompt+self.prompt, self.hidden_prompt_en+self.prompt_en, self.hidden_prompt+self.prompt]
         self.prompt_index = 2
         self.index = ""
         self.explorer = Explorer(self.config, self.model_name)
@@ -195,6 +196,8 @@ class TokenExplorer(App):
 
             if prompt.startswith(self.hidden_prompt):
                 prompt_text = prompt.removeprefix(self.hidden_prompt)
+            elif prompt.startswith(self.hidden_prompt_en):
+                prompt_text = prompt.removeprefix(self.hidden_prompt_en)
             else:
                 prompt_text = prompt
             prompt_legend = ""

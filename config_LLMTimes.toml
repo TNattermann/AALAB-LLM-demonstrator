@@ -13,9 +13,10 @@ name = "Qwen/Qwen2.5-3B"        # Model identifier
 
 # Prompt Settings
 [prompt]
-hidden_prompt = """Write a moral lesson for the end of a paedagical fable or story starting with:"""
+hidden_prompt = """Schreibe eine starke moralische Botschaft als Ende einer Fabel oder eines Märchens. """
+hidden_prompt_en = """English instructions"""
 
-german_prompt = "Und die Moral von der Geschichte: "
+german_prompt = "Und die Moral von der Geschichte: \""
 english_prompt = "And the moral of this story: "
 max_prompts = 200
 
@@ -28,15 +29,15 @@ tokens_to_show = 12          # Number of tokens to display in preview
 name = "gpt-4o-mini"
 prompt = """
         Write a concise paedagogical story or fable in the style of Brothers Grimm 
-        that elucidates the moral lesson provided below the instructions (the moral of the story), 
-        finalizing it at about 300 words in the same language like the moral, 
-        it should be entertaining for kids but have a clear message that appeals to young adults as well, 
+        that has a strong moral lesson, provided below the instructions (the moral of the story), 
+        finalizing it at about 350 words in the same language like the moral, 
+        it should have a clear moral message that appeals to young adults, 
         and ends with the provided text.
         Generate the full story including the moral as a floating text without intermediate titles 
         and no characers or symbols that are compatible with latex code!
         After that, generate a catchy and short title for the story, also in the same language.
         Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.
-
+        Dont include any newlines.
         Takeaway moral lesson:
         """
 

@@ -14,6 +14,7 @@ name = "Qwen/Qwen2.5-0.5B"        # Model identifier
 # Prompt Settings
 [prompt]
 hidden_prompt = ""
+hidden_prompt_en = """English instructions"""
 german_prompt = "Es war einmal vor langer Zeit in einem fernen Land"
 english_prompt = "Once upon a time, there was"
 max_prompts = 200

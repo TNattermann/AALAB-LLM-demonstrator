@@ -31,7 +31,6 @@ class Explorer:
         self.guide = None
         
         # Initialize with empty prompt
-        self.hidden_prompt = self.config["prompt"]["hidden_prompt"]
         self.prompt_text = ""
         self.prompt_tokens = []
     
@@ -54,8 +53,8 @@ class Explorer:
         Args:
             prompt_text: The prompt text to set
         """
-        self.prompt_text = self.hidden_prompt + prompt_text
-        self.prompt_tokens = self.tokenizer.encode(self.prompt_text)
+        self.prompt_text = prompt_text
+        self.prompt_tokens = self.tokenizer.encode(prompt_text)
         return self
     
 
