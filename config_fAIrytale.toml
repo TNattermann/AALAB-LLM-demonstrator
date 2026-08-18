@@ -1,0 +1,56 @@
+# Debugging
+[debugging]
+testing = false
+
+# printer settings
+[printer]
+num_prints = 1
+
+# Model Configuration
+[model]
+name = "Qwen/Qwen2.5-0.5B"        # Model identifier
+#name = "Qwen/Qwen2.5-3B"        # Model identifier
+
+# Prompt Settings
+[prompt]
+hidden_prompt = ""
+german_prompt = "Es war einmal vor langer Zeit in einem fernen Land"
+english_prompt = "Once upon a time, there was"
+max_prompts = 200
+
+# Display Settings
+[display]
+tokens_to_show = 12          # Number of tokens to display in preview
+
+# OpenAI model completion
+[text_completion]
+name = "gpt-4o-mini"
+prompt = """
+        Based on the following fairytale starting text, write a completed fairytale of at most 300 words in the same
+        language like the starting text,
+        Generate the full story including the starting text as a floating text without intermediate titles!
+        After that, generate a beautiful, short and creative title for this story, also in the same language.
+        Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.
+
+        Starting Text:
+        """
+
+[image_prompt_generation]
+name = "gpt-4o-mini"
+prompt = """
+        Based on the following fairytale, generate a short image prompt for the image API that
+        captures the key aspects of the generated story. This prompt needs to align with the OpenAI guidelines for
+        image generation (e.g. no trademarks used, no person of interest mentioned).
+        Format the response as JSON object, with 'img_prompt' as key.
+
+        Fairytale Text:
+        """
+
+[image_completion]
+name = "gpt-image-1-mini"
+prompt = """
+        Create a beautiful, colorful and imaginative squared format illustration without text
+        for the following fairytale:
+        """
+quality = "low"
+size = "1024x1024"

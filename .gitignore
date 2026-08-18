@@ -21,3 +21,4 @@ data/prompts/
 *.fdb_latexmk
 *.fls
 variable.txt
+openai_key.txt

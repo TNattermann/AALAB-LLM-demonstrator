@@ -3,7 +3,7 @@ from itertools import cycle
 from src.explorer import Explorer
 from src.utils import entropy_to_color, probability_to_color
 from src.Layout.layouter import Layouter
-from src.fairytale import Fairytale
+from src.completion import StoryCompletion
 from textual.containers import VerticalScroll
 from textual.reactive import reactive
 from textwrap import dedent
@@ -13,33 +13,16 @@ import argparse
 import tomli 
 from datetime import datetime
 from textual.app import App, ComposeResult
-from textual.containers import Container
-from textual.widgets import LoadingIndicator, Footer, Header, Static, DataTable
-from textual.screen import ModalScreen
+import asyncio
+from textual.containers import Horizontal, Vertical
+from textual.widgets import LoadingIndicator, Footer, Header, Static, DataTable, Label
 
-
-def load_config():
-    try:
-        with open("config.toml", "rb") as f:
-            return tomli.load(f)
-    except FileNotFoundError:
-        print("Config file not found, using default values")
-        return {
-            "model": "Qwen/Qwen2.5-0.5B",
-            "example_prompt": "Once upon a time, there was a",
-            "tokens_to_show": 30,
-            "max_prompts": 9
-        }
-
-config = load_config()
-MODEL_NAME = config["model"]["name"]
-EXAMPLE_PROMPT = config["prompt"]["example_prompt"]
-TOKENS_TO_SHOW = config["display"]["tokens_to_show"]
-MAX_PROMPTS = config["prompt"]["max_prompts"]
 
 class TokenExplorer(App):
     """Main application class."""
 
+    stop_text_animation: bool = False
+    index: str = ""
     CSS = """
     .hidden {
         display: none;
@@ -50,6 +33,14 @@ class TokenExplorer(App):
         align: center middle;
         height: 5;
     }
+    
+    #overlay_container {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);  /* semi-transparent overlay */
+    content-align: center middle;
+    layer: overlay;               /* float above all other widgets */
+}
     """
 
     display_modes = cycle(["prompt", "prob", "entropy"])
@@ -67,20 +58,29 @@ class TokenExplorer(App):
                 ("k", "select_prev", "Up"),
                 ("r", "toggle_struct", "Toggle struct"),
                 ("R", "next_struct", "Next struct")
-
                 ]
     
     
-    def __init__(self, prompt=EXAMPLE_PROMPT, precompile=False):
+    def __init__(self, mode, precompile=False):
         super().__init__()
         # Add support for multiple prompts.
-        self.prompts = [prompt, "Once upon a time, there was", prompt]
+        self.mode = mode
+        self.config = self.load_config()
+        self.model_name = self.config["model"]["name"]
+        self.hidden_prompt = self.config["prompt"]["hidden_prompt"]
+        self.prompt = self.config["prompt"]["german_prompt"]
+        self.prompt_en = self.config["prompt"]["english_prompt"]
+        self.tokens_to_show = self.config["display"]["tokens_to_show"]
+        self.max_prompts = self.config["prompt"]["max_prompts"]
+        self.testing = self.config["debugging"]["testing"]
+
+        self.prompts = [self.prompt, self.prompt_en, self.prompt]
         self.prompt_index = 2
-        self.index = None
-        self.explorer = Explorer(MODEL_NAME)
-        self.explorer.set_prompt(prompt)
+        self.index = ""
+        self.explorer = Explorer(self.config, self.model_name)
+        self.explorer.set_prompt(self.hidden_prompt+self.prompt)
         self.rows = self._top_tokens_to_rows(
-            self.explorer.get_top_n_tokens(n=TOKENS_TO_SHOW)
+            self.explorer.get_top_n_tokens(n=self.tokens_to_show)
             )
         self.selected_row = 0  # Track currently selected token row
         self.regex_structs = self._get_regex_structs()
@@ -90,6 +90,19 @@ class TokenExplorer(App):
         self.current_struct_index = 0
         if precompile:
             self.precompile_regex_structs()
+
+    def load_config(self):
+        try:
+            with open(f"config_{self.mode}.toml", "rb") as f:
+                return tomli.load(f)
+        except FileNotFoundError:
+            print("Config file not found, using default values")
+            return {
+                "model": "Qwen/Qwen2.5-0.5B",
+                "example_prompt": "Once upon a time, there was a",
+                "tokens_to_show": 30,
+                "max_prompts": 9
+            }
 
     def precompile_regex_structs(self):
         print("Precompiling regex structs, this may take a while...")
@@ -137,7 +150,7 @@ class TokenExplorer(App):
     def _refresh_table(self):
         table = self.query_one(DataTable)
         self.rows = self._top_tokens_to_rows(
-            self.explorer.get_top_n_tokens(n=TOKENS_TO_SHOW)
+            self.explorer.get_top_n_tokens(n=self.tokens_to_show)
             )
         table.clear()
         table.add_rows(self.rows[1:])
@@ -178,7 +191,7 @@ class TokenExplorer(App):
             token_strings = self.explorer.get_prompt_tokens_strings()
             prompt_text = "".join(f"[on {probability_to_color(prob)}]{token}[/on]" for token, prob in zip(token_strings, token_probs))
         else:
-            prompt_text = self.explorer.get_prompt()
+            prompt_text = self.explorer.get_prompt()[len(self.hidden_prompt):] # slice hidden prompt
             prompt_legend = ""
         return dedent(f"""
 {prompt_text}
@@ -218,7 +231,7 @@ class TokenExplorer(App):
         self._refresh_table()
         
     def action_add_prompt(self):
-        if len(self.prompts) < MAX_PROMPTS:
+        if len(self.prompts) < self.max_prompts:
             self.prompts.append(self.explorer.get_prompt())
             self.prompt_index = len(self.prompts) -1
             self.explorer.set_prompt(self.prompts[self.prompt_index])
@@ -250,25 +263,191 @@ class TokenExplorer(App):
         self.query_one("#results", Static).update(self._render_prompt())
 
     async def action_save_prompt(self):
-        import asyncio
-        spinner = self.query_one("#spinner", LoadingIndicator)
-        spinner.remove_class("hidden")  # Show spinner
-        try:
-            await asyncio.to_thread(self._save_prompt_work)
-        finally:
-            spinner.add_class("hidden")  # Hide spinner
-
-    def _save_prompt_work(self):
-        # This is the blocking work, run in background thread
-        instructions = "Vervollständige diese Märchengeschichte bis zu einem abgeschlossenen Ende und gib den gesamten Text nochmal aus ohne vorherige oder nachgelagerte Erklärungen. Die Geschichte sollte maximal 300 Wörter lang sein. Danach schreibe einen kurzen, prägnanten Titel zu dieser Geschichte. Im Anschluss generiere noch ohne weitere Rückfragen eine Illustration im Hochformat für ein Märchenbuch. \n\n"
+        prompt_text = self.explorer.get_prompt()
         self.index = f"{self.prompt_index}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+
+        # =========================================================
+        # Overlay Setup
+        # =========================================================
+
+        # --- Spinner ---
+        spinner = LoadingIndicator(id="spinner")
+        spinner.styles.margin = (1, 0, 2, 0)
+
+        # --- Initial loading label ---
+        spinner_label = Label(
+            "Completing your story...",
+            id="spinner_label"
+        )
+
+        spinner_label.styles.color = "white"
+        spinner_label.styles.bold = True
+        spinner_label.styles.width = "100%"
+        spinner_label.styles.content_align = ("center", "middle")
+        spinner_label.styles.padding = (1, 2)
+
+        # --- Crawling text label ---
+        anim_label = Label("", id="animation_label")
+
+        anim_label.styles.color = "white"
+        anim_label.styles.bold = True
+
+        # Bigger text canvas
+        anim_label.styles.width = "90%"
+        anim_label.styles.height = "auto"
+        anim_label.styles.min_height = 20
+
+        # Wrapping
+        anim_label.styles.text_wrap = "wrap"
+
+        # Internal spacing
+        anim_label.styles.padding = (2, 4)
+
+        # Visual styling
+        anim_label.styles.background = "#1e1e1e"
+        anim_label.styles.border = ("round", "white")
+
+        # Hide initially
+        anim_label.styles.display = "none"
+
+        # --- Overlay container ---
+        overlay = Vertical(
+            spinner,
+            spinner_label,
+            anim_label,
+            id="overlay_container"
+        )
+
+        overlay.styles.width = "100%"
+        overlay.styles.height = "100%"
+
+        overlay.styles.align = ("center", "middle")
+
+        overlay.styles.padding = (3, 6)
+
+        overlay.styles.layer = "overlay"
+
+        overlay.styles.background = "rgba(0,0,0,0.75)"
+
+        # Mount overlay
+        await self.mount(overlay)
+
+        # =========================================================
+        # Phase 1: Initial blocking work
+        # =========================================================
+
+        await asyncio.to_thread(
+            self._save_prompt_work_partial,
+            prompt_text
+        )
+
+        # =========================================================
+        # Phase 2: Generate story text
+        # =========================================================
+
+        ft = StoryCompletion(prompt_text, self.config)
+
+        generated_text_file = (
+            f"data/{self.index}_story.txt"
+        )
+
+        await asyncio.to_thread(
+            ft.generate_text,
+            "data/",
+            self.index
+        )
+
+        # =========================================================
+        # Transition to crawling animation
+        # =========================================================
+
+        spinner.styles.display = "none"
+        spinner_label.styles.display = "none"
+
+        anim_label.styles.display = "block"
+
+        # =========================================================
+        # Crawling text animation
+        # =========================================================
+
+        self.stop_text_animation = False
+
+        async def animate_label():
+
+            with open(
+                    generated_text_file,
+                    "r",
+                    encoding="utf-8"
+            ) as f:
+
+                text = f.read()
+
+            words = text.split()
+
+            current_text = ""
+
+            for word in words:
+
+                if self.stop_text_animation:
+                    break
+
+                current_text += word + " "
+
+                anim_label.update(current_text)
+
+                await asyncio.sleep(0.15)
+
+        animation_task = asyncio.create_task(
+            animate_label()
+        )
+
+        # =========================================================
+        # Remaining heavy work
+        # =========================================================
+
+        background_task = asyncio.create_task(
+            asyncio.to_thread(
+                self._save_prompt_work_final,
+                prompt_text
+            )
+        )
+
+        # Wait until one finishes first
+        done, pending = await asyncio.wait(
+            [animation_task, background_task],
+            return_when=asyncio.FIRST_COMPLETED
+        )
+
+        # Stop animation if backend finishes first
+        self.stop_text_animation = True
+
+        # Finish remaining tasks cleanly
+        await asyncio.gather(
+            *pending,
+            return_exceptions=True
+        )
+
+        # =========================================================
+        # Cleanup
+        # =========================================================
+
+        await overlay.remove()
+
+    def _save_prompt_work_partial(self, prompt_text):
+        """Blocking work before text generation"""
+        # Save the prompt to file
         with open(f"data/prompts/prompt_{self.index}.txt", "w") as f:
-            f.write(instructions + self.explorer.get_prompt())
-        ft = Fairytale(self.explorer.get_prompt())
-        ft.generate_items("data/", self.index)
-        layouter = Layouter(self.index, "src/Layout", ".")
+            f.write(prompt_text)
+
+    def _save_prompt_work_final(self, prompt_text):
+        """Blocking work after text generation"""
+        ft = StoryCompletion(prompt_text, self.config)
+        ft.generate_image("data/", self.index)
+
+        layouter = Layouter(self.index, self.mode, path_to_tex="src/Layout", path_to_data=".")
         layouter.formatter()
-        layouter.printer()
+        if not self.testing:
+            layouter.printer(copies=self.config["printer"]["num_prints"])
 
     def action_select_next(self):
         """Move selection down one row"""
@@ -316,9 +495,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Token Explorer Application')
     parser.add_argument('--input', '-i', type=str, help='Path to input text file')
     parser.add_argument('--precompile', '-p', action='store_true', help='Precompile regex structs')
+    parser.add_argument('--mode', '-m', type=str, choices=['fAIrytale', 'LLMTimes'], default='fAIrytale',
+        help='Execution mode (e.g. fAIrytale, LLMTimes')
     args = parser.parse_args()
 
-    prompt = EXAMPLE_PROMPT
     if args.input:
         try:
             with open(args.input, 'r') as f:
@@ -329,6 +509,6 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Error reading file: {e}")
             sys.exit(1)
-    app = TokenExplorer(prompt, args.precompile)
+    app = TokenExplorer(args.mode, args.precompile)
 
     app.run()

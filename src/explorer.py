@@ -8,7 +8,7 @@ import torch
 import numpy as np
 from src.simpleguide import SimpleGuide
 class Explorer:
-    def __init__(self, model_name="Qwen/Qwen2.5-0.5B"):
+    def __init__(self, config, model_name="Qwen/Qwen2.5-0.5B"):
         """
         Initialize the Explorer with a model name.
         
@@ -18,6 +18,7 @@ class Explorer:
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        self.config = config
         
         # Auto select device (CUDA > MPS > CPU)
         #if torch.cuda.is_available():
@@ -30,7 +31,8 @@ class Explorer:
         self.guide = None
         
         # Initialize with empty prompt
-        self.prompt_text = ""
+        self.hidden_prompt = self.config["prompt"]["hidden_prompt"]
+        self.prompt_text = self.hidden_prompt
         self.prompt_tokens = []
     
 

@@ -1,0 +1,75 @@
+# Debugging
+[debugging]
+testing = false
+
+# printer settings
+[printer]
+num_prints = 1
+
+# Model Configuration
+[model]
+#name = "Qwen/Qwen2.5-0.5B"        # Model identifier
+name = "Qwen/Qwen2.5-3B"        # Model identifier
+
+# Prompt Settings
+[prompt]
+hidden_prompt = ""
+
+
+hidden_prompt_l = """
+                Schreibe einen fertigen, journalistisch seriösen und detaillierten Zeitungsartikel für die Printausgabe
+                 der LLM-Times.
+                 Schreibe nur den Textkörper, keine Überschriften oder sonstigen Paratexte, vermeide Platzhalter und
+                 stelle keine Rückfragen. Der Text bekommt keine redaktionelle Überarbeitung mehr und muss fertig
+                 zum Druck sein. Beginne mit
+                """
+german_prompt = "In Berlin beginnt die re:publica Messe zu den Themen Digitales und Gesellschaft."
+english_prompt = "In Berlin, the re:publica conference begins, focusing on digital topics and society."
+max_prompts = 200
+
+# Display Settings
+[display]
+tokens_to_show = 12          # Number of tokens to display in preview
+
+# OpenAI model completion
+[text_completion]
+name = "gpt-4o-mini"
+prompt = """
+        Based on the following newsreport starting text for the LLMTimes, finalize the report of at most 350 words in
+        the same language like the starting text, making it an extraordinary event that needs to be reported on.
+        Generate the full story including the starting text as a floating text without intermediate titles and no dates!
+        After that, generate a catchy and short title for this report without using dates, also in the same language.
+        Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.
+
+        Starting Text: Berlin --
+        """
+
+# OpenAI prompt generation
+[image_prompt_generation]
+name = "gpt-4o-mini"
+prompt = """
+        Based on the following newsreport for the LLMTimes, generate a short image prompt for the image API that
+        captures the key aspects of the generated story. This prompt needs to align with the OpenAI guidelines for
+        image generation (e.g. no trademarks used, no person of interest mentioned).
+        Format the response as JSON object, with 'img_prompt' as key.
+
+        News Report:
+        """
+
+[image_completion]
+name = "gpt-image-1-mini" # gpt-image-2
+#prompt = """
+#        A square-format (1:1) photorealistic editorial photograph inspired by the described news report.
+#        Captured in the style of professional photojournalism (Reuters, AP, Getty Images).
+#        Realistic people, clothing, and environment — authentic lighting, natural colors, true-to-life materials and weather conditions.
+#        DSLR quality with crisp focus, shallow depth of field, subtle motion blur where appropriate, and genuine human emotion.
+#        Shot with a 35mm lens at f/2.8, ISO 400.
+#        Dynamic yet believable composition that captures the mood and setting of the event.
+#        No text, no captions, no illustrations — strictly photorealistic documentary style.
+#        """
+prompt = """
+         A square-format (1:1) image inspired by the described news report. Dynamic yet believable composition
+         that captures the mood and setting of the event. No text, no captions, no illustrations, no banners.
+         """
+quality = "low" # low,medium,high
+size = "1024x1024"
