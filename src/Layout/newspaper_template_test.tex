@@ -1,0 +1,34 @@
+\documentclass[10pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage[utf8]{inputenc} % To import external files
+\usepackage{multicol}
+\usepackage{lipsum} % Placeholder text
+\usepackage{titlesec} % Title styling
+\usepackage{geometry} % Margin control
+\usepackage{fancyhdr} % Header/Footer control
+\usepackage{times} % Newspaper-style font (Times New Roman-like)
+\usepackage{ragged2e} % To ensure good justification
+\usepackage[ngerman]{babel}
+\usepackage{graphicx}
+\usepackage[most]{tcolorbox}
+\usepackage{wrapfig}
+\usepackage{tgbonum}
+\usepackage[ngerman]{datenumber}
+\usepackage{paracol}
+%\usepackage{background} % For the watermark
+ 
+\input{variable.txt} % Input of the commands containing the Variables and paths to the story file and picture
+ 
+\setlength{\parindent}{0pt}  % No indent after a paragraph
+
+\begin{document}
+\centering
+{\LARGE\input{\storyTitle}}
+
+\includegraphics[width=0.5\columnwidth, keepaspectratio]{\storyPicture}
+\justify 
+
+\input{\story}
+
+\end{document}

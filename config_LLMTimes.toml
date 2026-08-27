@@ -13,10 +13,10 @@ name = "Qwen/Qwen2.5-3B"        # Model identifier
 
 # Prompt Settings
 [prompt]
-hidden_prompt = """Schreibe eine starke moralische Botschaft als Ende einer Fabel oder eines Märchens. """
+hidden_prompt = """Journalistischer Text zum Jubiläum in Kaiserslautern:"""
 hidden_prompt_en = """English instructions"""
 
-german_prompt = "Und die Moral von der Geschichte: \""
+german_prompt = "Mit eienm Ehrenamtstag feiert die Stadt ihr 750. Jubiläum."
 english_prompt = "And the moral of this story: "
 max_prompts = 200
 
@@ -28,24 +28,20 @@ tokens_to_show = 12          # Number of tokens to display in preview
 [text_completion]
 name = "gpt-4o-mini"
 prompt = """
-        Write a concise paedagogical story or fable in the style of Brothers Grimm 
-        that has a strong moral lesson, provided below the instructions (the moral of the story), 
-        finalizing it at about 350 words in the same language like the moral, 
-        it should have a clear moral message that appeals to young adults, 
-        and ends with the provided text.
-        Generate the full story including the moral as a floating text without intermediate titles 
-        and no characers or symbols that are compatible with latex code!
-        After that, generate a catchy and short title for the story, also in the same language.
+        Based on the following newsreport starting text for the LLMTimes, finalize the report of at most 350 words in
+        the same language like the starting text, making it an extraordinary event that needs to be reported on.
+        Generate the full story including the starting text as a floating text without intermediate titles and no dates!
+        After that, generate a catchy and short title for this report without using dates, also in the same language.
         Format the response as JSON object, with 'full_text' as the first key and 'title' as second key.
-        Dont include any newlines.
-        Takeaway moral lesson:
+
+        Starting Text: Kaiserslautern --
         """
 
 # OpenAI prompt generation
 [image_prompt_generation]
 name = "gpt-4o-mini"
 prompt = """
-        Based on the following tale, generate a short image prompt for the image API that
+        Based on the following newsreport for the LLMTimes, generate a short image prompt for the image API that
         captures the key aspects of the generated story. This prompt needs to align with the OpenAI guidelines for
         image generation (e.g. no trademarks used, no person of interest mentioned).
         Format the response as JSON object, with 'img_prompt' as key.

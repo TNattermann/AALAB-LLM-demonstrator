@@ -1,0 +1,25 @@
+\documentclass[onecolumn, fontsize=12pt]{scrartcl}
+\usepackage[utf8]{inputenc} % To import external files
+\usepackage[a4paper, top=3cm, bottom=4cm, left=3cm, right=3cm]{geometry} % Set the geometry of the page
+\usepackage{babel} % language
+\usepackage{graphicx}
+
+\input{variable.txt} % Input of the commands containing the Variables and paths to the story file and picture
+
+\begin{document}
+\selectlanguage{ngerman} % american ngerman
+\pagestyle{empty}
+\noindent
+
+% Title
+\begin{center}
+    {\LARGE \textbf{\input{\storyTitle}}}
+\end{center}
+
+\includegraphics[width=0.5\columnwidth, keepaspectratio]{\storyPicture}
+
+% Story
+\noindent
+\input{\story}
+
+\end{document}
