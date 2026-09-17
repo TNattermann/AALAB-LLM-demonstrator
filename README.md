@@ -11,10 +11,6 @@ The demonstrator served as an interactive installation at student information da
 
 ## Disclaimer II
 
-This is the mirrored version of the AALAB research group at RPTU Kaiserslautern. The majority of the listed work was done by me during my time at the research group.
-
-The demonstrator served as an interactive installation at student information days and was used at the [re:publica 2026](https://26.re-publica.com/de/session/llm-times-lass-ki-deine-wahre-geschichte-erzaehlen.html) in Berlin. 
-
 This repo is based on willkurt's [token-explorer repo](https://github.com/willkurt/token-explorer) and was further adapted by the AALAB at RPTU Kaiserslautern for demonstration purposes as a fAIrytale or LLMTimes generator for workshops etc.
 
 This ReadME file is adapted accordingly.
