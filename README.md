@@ -5,7 +5,7 @@
 
 ## Disclaimer I
 
-This is the mirrored version of the AALAB research group at RPTU Kaiserslautern. The majority of the listed work was done by me during my time at the research group. Original GitLab repo can be found [here](https://gitlab.rhrk.uni-kl.de/algorithm-accountability-lab/fairytale_tokenexplorer).
+This is the mirrored version of the AALAB research group repo at RPTU Kaiserslautern. The majority of the listed work was done by me during my time at the research group. Original GitLab repo can be found [here](https://gitlab.rhrk.uni-kl.de/algorithm-accountability-lab/fairytale_tokenexplorer).
 
 The demonstrator served as an interactive installation at student information days and was used at the [re:publica 2026](https://26.re-publica.com/de/session/llm-times-lass-ki-deine-wahre-geschichte-erzaehlen.html) in Berlin. 
 
